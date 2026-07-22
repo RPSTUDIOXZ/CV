@@ -1,262 +1,298 @@
-// Use environment variables
+// ============================================
+// EMAILJS CONFIGURATION
+// ============================================
 const EMAILJS_CONFIG = {
-    userID: 'fv7bcFtFncjEC38NP',        // Replace with your User ID
-    serviceID: 'service_b0u7ona',  // Replace with your Service ID
-    templateID: 'template_o49zurn' // Replace with your Template ID
+    userID: 'fv7bcFtFncjEC38NP',
+    serviceID: 'service_b0u7ona',
+    templateID: 'template_o49zurn'
 };
 
-emailjs.init(EMAILJS_CONFIG.userID);
+// Initialize EmailJS
+(function() {
+    emailjs.init(EMAILJS_CONFIG.userID);
+    console.log('✅ EmailJS initialized successfully!');
+})();
 
-// Send email
-emailjs.send(
-    EMAILJS_CONFIG.serviceID,
-    EMAILJS_CONFIG.templateID,
-    templateParams
-);
 // ============================================
-// LANGUAGE TRANSLATIONS
+// DOM Elements
 // ============================================
-const translations = {
-    en: {
-        appTitle: "Professional CV Builder",
-        tipsTitle: "Professional Tips",
-        tip1: "Font sizes: 11-12pt body, 14-16pt headings",
-        tip2: "Keep white space - don't overcrowd",
-        tip3: "Use action verbs: Developed, Managed, Created",
-        tip4: "Quantify achievements: 'Increased sales by 20%'",
-        tip5: "Fit perfectly on A4 size",
-        templateTitle: "Choose Template",
-        templateModern: "Modern",
-        templateClassic: "Classic",
-        templateCreative: "Creative",
-        formTitle: "Enter Your Details",
-        photoLabel: "Profile Photo",
-        uploadPhotoText: "Upload Photo",
-        fullNameLabel: "Full Name",
-        jobTitleLabel: "Job Title",
-        emailLabelForm: "Email",
-        phoneLabel: "Phone",
-        addressLabel: "Address",
-        educationLabel: "Education",
-        experienceLabel: "Work Experience",
-        skillsLabel: "Skills",
-        certificationsLabel: "Certifications",
-        portfolioLabel: "Portfolio/Website",
-        generateBtn: "Generate CV",
-        saveDraftBtn: "Save Draft",
-        loadDraftBtn: "Load Draft",
-        previewTitle: "CV Preview",
-        pdfBtn: "PDF Download",
-        printBtn: "Print",
-        shareBtn: "Share",
-        clearBtn: "Clear",
-        cvEducationTitle: "Education",
-        cvExperienceTitle: "Work Experience",
-        cvSkillsTitle: "Skills",
-        cvCertificationsTitle: "Certifications",
-        cvPortfolioTitle: "Portfolio",
-        loginTitle: "Login",
-        loginSubtitle: "Login to save your CV",
-        emailLabel: "Email",
-        sendOtpText: "Send OTP",
-        otpLabel: "Enter OTP Code",
-        verifyText: "Verify",
-        loginSuccess: "✅ Login successful!",
-        loginError: "❌ Invalid OTP. Please try again.",
-        shareText: "Check out my professional CV!",
-        clearConfirm: "Are you sure you want to clear all data?",
-        loadingPDF: "⏳ Generating PDF...",
-    },
-    si: {
-        appTitle: "වෘත්තීය CV නිර්මාණය",
-        tipsTitle: "වෘත්තීය උපදෙස්",
-        tip1: "අකුරු ප්‍රමාණ: 11-12pt සිරුර, 14-16pt ශීර්ෂ",
-        tip2: "හිස් ඉඩ තබන්න - ඕනෑවට වඩා පුරවන්න එපා",
-        tip3: "ක්‍රියා පද භාවිතා කරන්න: සංවර්ධනය, කළමනාකරණය, නිර්මාණය",
-        tip4: "ජයග්‍රහණ ප්‍රමාණනය කරන්න: 'විකුණුම් 20% කින් වැඩි කළා'",
-        tip5: "A4 ප්‍රමාණයට හරියටම ගැලපෙන්න",
-        templateTitle: "අච්චුව තෝරන්න",
-        templateModern: "නවීන",
-        templateClassic: "සම්භාව්‍ය",
-        templateCreative: "නිර්මාණශීලී",
-        formTitle: "ඔබගේ විස්තර ඇතුලත් කරන්න",
-        photoLabel: "ප්‍රොෆයිල් ඡායාරූපය",
-        uploadPhotoText: "ඡායාරූපය උඩුගත කරන්න",
-        fullNameLabel: "පූර්ණ නම",
-        jobTitleLabel: "රැකියා තනතුර",
-        emailLabelForm: "විද්‍යුත් තැපෑල",
-        phoneLabel: "දුරකථන අංකය",
-        addressLabel: "ලිපිනය",
-        educationLabel: "අධ්‍යාපනය",
-        experienceLabel: "වැඩ පළපුරුද්ද",
-        skillsLabel: "කුසලතා",
-        certificationsLabel: "සහතික",
-        portfolioLabel: "වෙබ් අඩවිය/වරාය",
-        generateBtn: "CV එක සාදන්න",
-        saveDraftBtn: "කෙටුම්පත සුරකින්න",
-        loadDraftBtn: "කෙටුම්පත පටවන්න",
-        previewTitle: "CV පෙරදසුන",
-        pdfBtn: "PDF බාගන්න",
-        printBtn: "මුද්‍රණය",
-        shareBtn: "බෙදාගන්න",
-        clearBtn: "ඉවත් කරන්න",
-        cvEducationTitle: "අධ්‍යාපනය",
-        cvExperienceTitle: "වැඩ පළපුරුද්ද",
-        cvSkillsTitle: "කුසලතා",
-        cvCertificationsTitle: "සහතික",
-        cvPortfolioTitle: "වෙබ් අඩවිය",
-        loginTitle: "පිවිසෙන්න",
-        loginSubtitle: "CV එක සුරැකීමට පිවිසෙන්න",
-        emailLabel: "විද්‍යුත් තැපෑල",
-        sendOtpText: "OTP එක යවන්න",
-        otpLabel: "OTP කේතය ඇතුලත් කරන්න",
-        verifyText: "තහවුරු කරන්න",
-        loginSuccess: "✅ පිවිසුම සාර්ථකයි!",
-        loginError: "❌ වලංගු OTP එකක් නොවේ. නැවත උත්සාහ කරන්න.",
-        shareText: "මගේ වෘත්තීය CV එක බලන්න!",
-        clearConfirm: "ඔබට සියලු දත්ත මකා දැමීමට අවශ්‍යද?",
-        loadingPDF: "⏳ PDF එක සාදමින්...",
-    },
-    tm: {
-        appTitle: "தொழில்முறை CV உருவாக்கி",
-        tipsTitle: "தொழில்முறை குறிப்புகள்",
-        tip1: "எழுத்துரு அளவு: 11-12pt உடல், 14-16pt தலைப்புகள்",
-        tip2: "வெற்று இடத்தை வைத்திருங்கள் - நெருக்கடியாக்க வேண்டாம்",
-        tip3: "செயல் வினைச்சொற்களைப் பயன்படுத்தவும்: உருவாக்கப்பட்டது, நிர்வகிக்கப்பட்டது, உருவாக்கப்பட்டது",
-        tip4: "சாதனைகளை அளவிடவும்: 'விற்பனை 20% அதிகரித்தது'",
-        tip5: "A4 அளவில் சரியாக பொருந்தும்",
-        templateTitle: "வார்ப்புருவை தேர்ந்தெடுக்கவும்",
-        templateModern: "நவீன",
-        templateClassic: "பாரம்பரிய",
-        templateCreative: "படைப்பு",
-        formTitle: "உங்கள் விவரங்களை உள்ளிடுக",
-        photoLabel: "சுயவிவர புகைப்படம்",
-        uploadPhotoText: "புகைப்படத்தை பதிவேற்றவும்",
-        fullNameLabel: "முழு பெயர்",
-        jobTitleLabel: "பணி தலைப்பு",
-        emailLabelForm: "மின்னஞ்சல்",
-        phoneLabel: "தொலைபேசி",
-        addressLabel: "முகவரி",
-        educationLabel: "கல்வி",
-        experienceLabel: "பணி அனுபவம்",
-        skillsLabel: "திறன்கள்",
-        certificationsLabel: "சான்றிதழ்கள்",
-        portfolioLabel: "இணையதளம்/துறைமுகம்",
-        generateBtn: "CV உருவாக்கு",
-        saveDraftBtn: "வரைவை சேமிக்கவும்",
-        loadDraftBtn: "வரைவை ஏற்றவும்",
-        previewTitle: "CV முன்னோட்டம்",
-        pdfBtn: "PDF பதிவிறக்கம்",
-        printBtn: "அச்சிடுக",
-        shareBtn: "பகிர்",
-        clearBtn: "அழிக்கவும்",
-        cvEducationTitle: "கல்வி",
-        cvExperienceTitle: "பணி அனுபவம்",
-        cvSkillsTitle: "திறன்கள்",
-        cvCertificationsTitle: "சான்றிதழ்கள்",
-        cvPortfolioTitle: "இணையதளம்",
-        loginTitle: "உள்நுழைக",
-        loginSubtitle: "CV ஐ சேமிக்க உள்நுழைக",
-        emailLabel: "மின்னஞ்சல்",
-        sendOtpText: "OTP அனுப்புக",
-        otpLabel: "OTP குறியீட்டை உள்ளிடுக",
-        verifyText: "சரிபார்க்கவும்",
-        loginSuccess: "✅ உள்நுழைவு வெற்றிகரமானது!",
-        loginError: "❌ தவறான OTP. மீண்டும் முயற்சிக்கவும்.",
-        shareText: "எனது தொழில்முறை CV ஐ பாருங்கள்!",
-        clearConfirm: "அனைத்து தரவுகளையும் நீக்க வேண்டுமா?",
-        loadingPDF: "⏳ PDF உருவாக்குகிறது...",
-    }
+const DOM = {
+    fullName: document.getElementById('fullName'),
+    jobTitle: document.getElementById('jobTitle'),
+    email: document.getElementById('email'),
+    phone: document.getElementById('phone'),
+    address: document.getElementById('address'),
+    education: document.getElementById('education'),
+    experience: document.getElementById('experience'),
+    skills: document.getElementById('skills'),
+    certifications: document.getElementById('certifications'),
+    portfolio: document.getElementById('portfolio'),
+    
+    cvName: document.getElementById('cvName'),
+    cvJobTitle: document.getElementById('cvJobTitle'),
+    cvEmail: document.getElementById('cvEmail'),
+    cvPhone: document.getElementById('cvPhone'),
+    cvAddress: document.getElementById('cvAddress'),
+    cvEducation: document.getElementById('cvEducation'),
+    cvExperience: document.getElementById('cvExperience'),
+    cvSkills: document.getElementById('cvSkills'),
+    cvCertifications: document.getElementById('cvCertifications'),
+    cvPortfolio: document.getElementById('cvPortfolio'),
+    cvPhoto: document.getElementById('cvPhoto'),
+    photoPreview: document.getElementById('photoPreview'),
+    cvPreview: document.getElementById('cvPreview')
 };
 
-let currentLang = 'en';
 let currentTemplate = 'modern';
-let loggedInUser = null;
-let generatedOTP = null;
 let photoData = null;
+let generatedOTP = null;
+let otpTimer = null;
+let loggedInUser = null;
 
 // ============================================
-// LANGUAGE CHANGE FUNCTION
+// INITIALIZATION
 // ============================================
-function changeLanguage(lang) {
-    currentLang = lang;
+document.addEventListener('DOMContentLoaded', function() {
+    // Load saved data
+    loadFromLocalStorage();
     
-    // Update active button
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.dataset.lang === lang) {
-            btn.classList.add('active');
-        }
-    });
+    // Check if user was logged in
+    const savedUser = localStorage.getItem('cv_user');
+    if (savedUser) {
+        loggedInUser = savedUser;
+        document.getElementById('userStatus').textContent = '👤 ' + loggedInUser;
+        document.getElementById('loginBtn').innerHTML = '<i class="fas fa-check-circle"></i>';
+    }
     
-    // Update all text elements
-    const t = translations[lang];
-    Object.keys(t).forEach(key => {
-        const elements = document.querySelectorAll(`[id="${key}"]`);
-        elements.forEach(el => {
-            if (el) el.textContent = t[key];
-        });
-    });
-    
-    // Update placeholders based on language
-    updatePlaceholders(lang);
-    
-    // Save language preference
-    localStorage.setItem('cv_language', lang);
-}
+    console.log('🚀 CV Builder Loaded Successfully!');
+});
 
-function updatePlaceholders(lang) {
-    const placeholders = {
-        en: {
-            fullName: "Kamal Perera",
-            jobTitle: "Software Engineer",
-            email: "kamal@gmail.com",
-            phone: "071-2345678",
-            address: "Colombo, Sri Lanka",
-            education: "University of Colombo - BSc (Hons) Computer Science",
-            experience: "ABC Company - Software Engineer (2020-Present)\n• Developed web applications using React\n• Increased performance by 30%",
-            skills: "JavaScript, Python, React, PHP, Node.js",
-            certifications: "AWS Certified Developer, IELTS 7.5",
-            portfolio: "https://yourportfolio.com"
-        },
-        si: {
-            fullName: "කමල් පෙරේරා",
-            jobTitle: "මෘදුකාංග ඉංජිනේරු",
-            email: "kamal@gmail.com",
-            phone: "071-2345678",
-            address: "කොළඹ, ශ්‍රී ලංකාව",
-            education: "කොළඹ විශ්වවිද්‍යාලය - BSc (Hons) පරිගණක විද්‍යාව",
-            experience: "ABC සමාගම - මෘදුකාංග ඉංජිනේරු (2020-වර්තමානය)\n• React භාවිතා කර වෙබ් යෙදුම් සංවර්ධනය\n• කාර්ය සාධනය 30% කින් වැඩි කළා",
-            skills: "JavaScript, Python, React, PHP, Node.js",
-            certifications: "AWS Certified Developer, IELTS 7.5",
-            portfolio: "https://yourportfolio.com"
-        },
-        tm: {
-            fullName: "கமல் பெரேரா",
-            jobTitle: "மென்பொருள் பொறியாளர்",
-            email: "kamal@gmail.com",
-            phone: "071-2345678",
-            address: "கொழும்பு, இலங்கை",
-            education: "கொழும்பு பல்கலைக்கழகம் - BSc (Hons) கணினி அறிவியல்",
-            experience: "ABC நிறுவனம் - மென்பொருள் பொறியாளர் (2020-தற்போது)\n• React பயன்படுத்தி வெப் பயன்பாடுகளை உருவாக்குதல்\n• செயல்திறனை 30% அதிகரித்தது",
-            skills: "JavaScript, Python, React, PHP, Node.js",
-            certifications: "AWS Certified Developer, IELTS 7.5",
-            portfolio: "https://yourportfolio.com"
-        }
+// ============================================
+// LOGIN SYSTEM - Send OTP
+// ============================================
+function sendOTP(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value;
+    const userName = document.getElementById('fullName').value || 'User';
+    
+    if (!email) {
+        alert('Please enter your email address');
+        return;
+    }
+    
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address');
+        return;
+    }
+    
+    // Generate OTP
+    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Show loading
+    const sendBtn = document.getElementById('sendOtpBtn');
+    const originalText = sendBtn.innerHTML;
+    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    sendBtn.disabled = true;
+    
+    // Send OTP via EmailJS
+    const templateParams = {
+        to_email: email,
+        to_name: userName,
+        otp_code: generatedOTP,
+        subject: '🔐 Your CV Builder OTP Code'
     };
     
-    const p = placeholders[lang];
-    document.getElementById('fullName').placeholder = p.fullName;
-    document.getElementById('jobTitle').placeholder = p.jobTitle;
-    document.getElementById('email').placeholder = p.email;
-    document.getElementById('phone').placeholder = p.phone;
-    document.getElementById('address').placeholder = p.address;
-    document.getElementById('education').placeholder = p.education;
-    document.getElementById('experience').placeholder = p.experience;
-    document.getElementById('skills').placeholder = p.skills;
-    document.getElementById('certifications').placeholder = p.certifications;
-    document.getElementById('portfolio').placeholder = p.portfolio;
+    emailjs.send(
+        EMAILJS_CONFIG.serviceID,
+        EMAILJS_CONFIG.templateID,
+        templateParams
+    )
+    .then(function(response) {
+        console.log('✅ OTP Sent Successfully:', response);
+        
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="success">✅ OTP sent successfully to your email!</div>';
+        document.getElementById('otpSection').style.display = 'block';
+        document.getElementById('loginEmail').disabled = true;
+        sendBtn.innerHTML = '<i class="fas fa-check"></i> Sent!';
+        sendBtn.style.background = '#28a745';
+        
+        // Start timer
+        startOTPTimer();
+        
+        // Focus OTP input
+        document.getElementById('otpInput').focus();
+    })
+    .catch(function(error) {
+        console.error('❌ EmailJS Error:', error);
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="error">❌ Failed to send OTP. Please check your email and try again.</div>';
+        sendBtn.innerHTML = originalText;
+        sendBtn.disabled = false;
+    });
 }
+
+// ============================================
+// OTP TIMER
+// ============================================
+function startOTPTimer() {
+    if (otpTimer) {
+        clearInterval(otpTimer);
+    }
+    
+    let timeLeft = 300; // 5 minutes
+    const timerDisplay = document.getElementById('otpTimerDisplay');
+    timerDisplay.style.display = 'block';
+    
+    otpTimer = setInterval(() => {
+        timeLeft--;
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerDisplay.textContent = `⏰ ${minutes}:${seconds.toString().padStart(2, '0')} remaining`;
+        
+        if (timeLeft <= 0) {
+            clearInterval(otpTimer);
+            generatedOTP = null;
+            timerDisplay.textContent = '⏰ OTP expired. Please request a new one.';
+            timerDisplay.style.color = '#dc3545';
+            document.getElementById('resendBtn').style.display = 'block';
+        }
+    }, 1000);
+}
+
+// ============================================
+// VERIFY OTP
+// ============================================
+function verifyOTP() {
+    const enteredOTP = document.getElementById('otpInput').value;
+    const email = document.getElementById('loginEmail').value;
+    
+    if (!enteredOTP || enteredOTP.length !== 6) {
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="error">⚠️ Please enter a valid 6-digit OTP</div>';
+        return;
+    }
+    
+    if (enteredOTP === generatedOTP) {
+        // Login successful
+        loggedInUser = email;
+        localStorage.setItem('cv_user', email);
+        
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="success">✅ Login successful! Welcome ' + email + '</div>';
+        document.getElementById('userStatus').textContent = '👤 ' + email;
+        document.getElementById('loginBtn').innerHTML = '<i class="fas fa-check-circle"></i>';
+        
+        // Clear timer
+        if (otpTimer) {
+            clearInterval(otpTimer);
+        }
+        
+        setTimeout(() => {
+            closeLogin();
+            generateCV();
+            saveToLocalStorage();
+        }, 1500);
+        
+    } else {
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="error">❌ Invalid OTP. Please try again.</div>';
+        document.getElementById('otpInput').value = '';
+        document.getElementById('otpInput').focus();
+    }
+}
+
+// ============================================
+// RESEND OTP
+// ============================================
+function resendOTP() {
+    const email = document.getElementById('loginEmail').value;
+    const userName = document.getElementById('fullName').value || 'User';
+    
+    if (!email) {
+        alert('Please enter your email');
+        return;
+    }
+    
+    // Generate new OTP
+    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    const resendBtn = document.getElementById('resendBtn');
+    resendBtn.disabled = true;
+    resendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    
+    const templateParams = {
+        to_email: email,
+        to_name: userName,
+        otp_code: generatedOTP,
+        subject: '🔐 New OTP Code for CV Builder'
+    };
+    
+    emailjs.send(
+        EMAILJS_CONFIG.serviceID,
+        EMAILJS_CONFIG.templateID,
+        templateParams
+    )
+    .then(function(response) {
+        console.log('✅ New OTP Sent:', response);
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="success">✅ New OTP sent successfully!</div>';
+        resendBtn.innerHTML = '<i class="fas fa-check"></i> Sent!';
+        resendBtn.style.background = '#28a745';
+        startOTPTimer();
+        document.getElementById('otpInput').focus();
+        
+        setTimeout(() => {
+            resendBtn.disabled = false;
+            resendBtn.innerHTML = '<i class="fas fa-redo"></i> Resend';
+            resendBtn.style.background = '';
+        }, 3000);
+    })
+    .catch(function(error) {
+        console.error('❌ Resend Error:', error);
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="error">❌ Failed to resend OTP. Please try again.</div>';
+        resendBtn.disabled = false;
+        resendBtn.innerHTML = '<i class="fas fa-redo"></i> Resend';
+    });
+}
+
+// ============================================
+// SHOW/HIDE LOGIN MODAL
+// ============================================
+function showLogin() {
+    document.getElementById('loginModal').style.display = 'block';
+    document.getElementById('loginStatus').innerHTML = '';
+    document.getElementById('otpSection').style.display = 'none';
+    document.getElementById('loginEmail').disabled = false;
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('otpInput').value = '';
+    
+    const sendBtn = document.getElementById('sendOtpBtn');
+    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+    sendBtn.disabled = false;
+    sendBtn.style.background = '';
+    
+    document.getElementById('otpTimerDisplay').style.display = 'none';
+}
+
+function closeLogin() {
+    document.getElementById('loginModal').style.display = 'none';
+    if (otpTimer) {
+        clearInterval(otpTimer);
+    }
+}
+
+// Close modal on outside click
+window.onclick = function(event) {
+    const modal = document.getElementById('loginModal');
+    if (event.target === modal) {
+        closeLogin();
+    }
+};
 
 // ============================================
 // PROFILE PHOTO UPLOAD
@@ -267,8 +303,8 @@ function uploadPhoto(event) {
         const reader = new FileReader();
         reader.onload = function(e) {
             photoData = e.target.result;
-            document.getElementById('photoPreview').innerHTML = `<img src="${photoData}" alt="Profile Photo">`;
-            document.getElementById('cvPhoto').innerHTML = `<img src="${photoData}" alt="Profile Photo">`;
+            document.getElementById('photoPreview').innerHTML = `<img src="${photoData}" alt="Profile">`;
+            document.getElementById('cvPhoto').innerHTML = `<img src="${photoData}" alt="Profile">`;
         };
         reader.readAsDataURL(file);
     }
@@ -280,7 +316,6 @@ function uploadPhoto(event) {
 function changeTemplate(template) {
     currentTemplate = template;
     
-    // Update active button
     document.querySelectorAll('.template-btn').forEach(btn => {
         btn.classList.remove('active');
         if (btn.dataset.template === template) {
@@ -288,48 +323,44 @@ function changeTemplate(template) {
         }
     });
     
-    // Update preview class
-    const preview = document.getElementById('cvPreview');
-    preview.className = 'cv-preview ' + template + '-template';
+    document.getElementById('cvPreview').className = 'cv-preview ' + template + '-template';
 }
 
 // ============================================
 // GENERATE CV
 // ============================================
 function generateCV() {
-    const name = document.getElementById('fullName').value || 'Your Name';
-    const jobTitle = document.getElementById('jobTitle').value || 'Job Title';
-    const email = document.getElementById('email').value || 'Email';
-    const phone = document.getElementById('phone').value || 'Phone';
-    const address = document.getElementById('address').value || 'Address';
-    const education = document.getElementById('education').value || 'Education details appear here';
-    const experience = document.getElementById('experience').value || 'Work experience appears here';
-    const skills = document.getElementById('skills').value || 'Skills';
-    const certifications = document.getElementById('certifications').value || 'Certifications appear here';
-    const portfolio = document.getElementById('portfolio').value || 'https://yourportfolio.com';
+    const name = DOM.fullName.value || 'Your Name';
+    const jobTitle = DOM.jobTitle.value || 'Job Title';
+    const email = DOM.email.value || 'Email';
+    const phone = DOM.phone.value || 'Phone';
+    const address = DOM.address.value || 'Address';
+    const education = DOM.education.value || 'Education details appear here';
+    const experience = DOM.experience.value || 'Work experience appears here';
+    const skills = DOM.skills.value || 'Skills';
+    const certifications = DOM.certifications.value || 'Certifications appear here';
+    const portfolio = DOM.portfolio.value || 'https://yourportfolio.com';
     
-    // Update preview
-    document.getElementById('cvName').textContent = name;
-    document.getElementById('cvJobTitle').textContent = jobTitle;
-    document.getElementById('cvEmail').textContent = '📧 ' + email;
-    document.getElementById('cvPhone').textContent = '📞 ' + phone;
-    document.getElementById('cvAddress').textContent = '📍 ' + address;
-    document.getElementById('cvEducation').textContent = education;
-    document.getElementById('cvExperience').textContent = experience;
+    DOM.cvName.textContent = name;
+    DOM.cvJobTitle.textContent = jobTitle;
+    DOM.cvEmail.textContent = '📧 ' + email;
+    DOM.cvPhone.textContent = '📞 ' + phone;
+    DOM.cvAddress.textContent = '📍 ' + address;
+    DOM.cvEducation.textContent = education;
+    DOM.cvExperience.textContent = experience;
     
     // Skills as tags
     const skillsArray = skills.split(',').map(s => s.trim()).filter(s => s);
-    const skillsContainer = document.getElementById('cvSkills');
     if (skillsArray.length > 0 && skillsArray[0] !== 'Skills') {
-        skillsContainer.innerHTML = skillsArray.map(s => 
+        DOM.cvSkills.innerHTML = skillsArray.map(s => 
             `<span class="skill-tag">${s}</span>`
         ).join('');
     } else {
-        skillsContainer.innerHTML = '<span class="skill-tag">Skill</span>';
+        DOM.cvSkills.innerHTML = '<span class="skill-tag">Skill</span>';
     }
     
-    document.getElementById('cvCertifications').textContent = certifications;
-    document.getElementById('cvPortfolio').textContent = portfolio;
+    DOM.cvCertifications.textContent = certifications;
+    DOM.cvPortfolio.textContent = portfolio;
     
     // Scroll to preview
     document.querySelector('.preview-section').scrollIntoView({ behavior: 'smooth' });
@@ -343,7 +374,7 @@ function downloadPDF() {
     const btn = document.querySelector('.btn-download');
     const originalText = btn.innerHTML;
     
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + translations[currentLang].loadingPDF;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
     btn.disabled = true;
     
     const opt = {
@@ -383,7 +414,6 @@ function printCV() {
                     .skill-tag { background: #f0f2f5; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; }
                     @media print {
                         body { padding: 20px; }
-                        .no-print { display: none; }
                     }
                 </style>
             </head>
@@ -404,84 +434,78 @@ function printCV() {
 // SHARE CV
 // ============================================
 function shareCV() {
-    const shareText = translations[currentLang].shareText;
     const url = window.location.href;
+    const text = 'Check out my professional CV!';
     
     if (navigator.share) {
         navigator.share({
             title: 'My Professional CV',
-            text: shareText,
+            text: text,
             url: url
         }).catch(() => {});
     } else {
-        // Fallback - copy to clipboard
-        const textToCopy = shareText + '\n' + url;
-        navigator.clipboard.writeText(textToCopy).then(() => {
+        navigator.clipboard.writeText(text + '\n' + url).then(() => {
             alert('✅ Link copied to clipboard!');
         }).catch(() => {
-            // Manual copy
             prompt('Copy this link:', url);
         });
     }
 }
 
 // ============================================
-// LOCAL STORAGE - SAVE/LOAD
+// LOCAL STORAGE
 // ============================================
 function saveToLocalStorage() {
     const data = {
-        fullName: document.getElementById('fullName').value,
-        jobTitle: document.getElementById('jobTitle').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        address: document.getElementById('address').value,
-        education: document.getElementById('education').value,
-        experience: document.getElementById('experience').value,
-        skills: document.getElementById('skills').value,
-        certifications: document.getElementById('certifications').value,
-        portfolio: document.getElementById('portfolio').value,
+        fullName: DOM.fullName.value,
+        jobTitle: DOM.jobTitle.value,
+        email: DOM.email.value,
+        phone: DOM.phone.value,
+        address: DOM.address.value,
+        education: DOM.education.value,
+        experience: DOM.experience.value,
+        skills: DOM.skills.value,
+        certifications: DOM.certifications.value,
+        portfolio: DOM.portfolio.value,
         photo: photoData,
-        template: currentTemplate,
-        language: currentLang
+        template: currentTemplate
     };
     
     localStorage.setItem('cv_data', JSON.stringify(data));
-    alert('✅ ' + translations[currentLang].saveDraftBtn + ' successful!');
+    alert('✅ Draft saved successfully!');
 }
 
 function loadFromLocalStorage() {
     const saved = localStorage.getItem('cv_data');
     if (saved) {
-        const data = JSON.parse(saved);
-        document.getElementById('fullName').value = data.fullName || '';
-        document.getElementById('jobTitle').value = data.jobTitle || '';
-        document.getElementById('email').value = data.email || '';
-        document.getElementById('phone').value = data.phone || '';
-        document.getElementById('address').value = data.address || '';
-        document.getElementById('education').value = data.education || '';
-        document.getElementById('experience').value = data.experience || '';
-        document.getElementById('skills').value = data.skills || '';
-        document.getElementById('certifications').value = data.certifications || '';
-        document.getElementById('portfolio').value = data.portfolio || '';
-        
-        if (data.photo) {
-            photoData = data.photo;
-            document.getElementById('photoPreview').innerHTML = `<img src="${photoData}" alt="Profile Photo">`;
-            document.getElementById('cvPhoto').innerHTML = `<img src="${photoData}" alt="Profile Photo">`;
+        try {
+            const data = JSON.parse(saved);
+            DOM.fullName.value = data.fullName || '';
+            DOM.jobTitle.value = data.jobTitle || '';
+            DOM.email.value = data.email || '';
+            DOM.phone.value = data.phone || '';
+            DOM.address.value = data.address || '';
+            DOM.education.value = data.education || '';
+            DOM.experience.value = data.experience || '';
+            DOM.skills.value = data.skills || '';
+            DOM.certifications.value = data.certifications || '';
+            DOM.portfolio.value = data.portfolio || '';
+            
+            if (data.photo) {
+                photoData = data.photo;
+                document.getElementById('photoPreview').innerHTML = `<img src="${photoData}" alt="Profile">`;
+                document.getElementById('cvPhoto').innerHTML = `<img src="${photoData}" alt="Profile">`;
+            }
+            
+            if (data.template) {
+                changeTemplate(data.template);
+            }
+            
+            generateCV();
+            console.log('✅ Data loaded from localStorage');
+        } catch(e) {
+            console.error('Error loading data:', e);
         }
-        
-        if (data.template) {
-            changeTemplate(data.template);
-        }
-        
-        if (data.language) {
-            changeLanguage(data.language);
-        }
-        
-        generateCV();
-        alert('✅ ' + translations[currentLang].loadDraftBtn + ' successful!');
-    } else {
-        alert('⚠️ No saved data found.');
     }
 }
 
@@ -489,23 +513,25 @@ function loadFromLocalStorage() {
 // CLEAR ALL
 // ============================================
 function clearAll() {
-    if (confirm(translations[currentLang].clearConfirm)) {
+    if (confirm('Are you sure you want to clear all data?')) {
         document.querySelectorAll('input, textarea').forEach(el => {
             el.value = '';
         });
         photoData = null;
         document.getElementById('photoPreview').innerHTML = '';
         document.getElementById('cvPhoto').innerHTML = '<i class="fas fa-user-circle"></i>';
-        document.getElementById('cvName').textContent = 'Your Name';
-        document.getElementById('cvJobTitle').textContent = 'Job Title';
-        document.getElementById('cvEmail').textContent = '📧 Email';
-        document.getElementById('cvPhone').textContent = '📞 Phone';
-        document.getElementById('cvAddress').textContent = '📍 Address';
-        document.getElementById('cvEducation').textContent = 'Education details appear here';
-        document.getElementById('cvExperience').textContent = 'Work experience appears here';
-        document.getElementById('cvSkills').innerHTML = '<span class="skill-tag">Skill</span>';
-        document.getElementById('cvCertifications').textContent = 'Certifications appear here';
-        document.getElementById('cvPortfolio').textContent = 'https://yourportfolio.com';
+        DOM.cvName.textContent = 'Your Name';
+        DOM.cvJobTitle.textContent = 'Job Title';
+        DOM.cvEmail.textContent = '📧 Email';
+        DOM.cvPhone.textContent = '📞 Phone';
+        DOM.cvAddress.textContent = '📍 Address';
+        DOM.cvEducation.textContent = 'Education details appear here';
+        DOM.cvExperience.textContent = 'Work experience appears here';
+        DOM.cvSkills.innerHTML = '<span class="skill-tag">Skill</span>';
+        DOM.cvCertifications.textContent = 'Certifications appear here';
+        DOM.cvPortfolio.textContent = 'https://yourportfolio.com';
+        
+        localStorage.removeItem('cv_data');
     }
 }
 
@@ -524,350 +550,28 @@ function toggleDarkMode() {
     }
 }
 
-// ============================================
-// LOGIN SYSTEM (EmailJS)
-// ============================================
-function showLogin() {
-    document.getElementById('loginModal').style.display = 'block';
-}
-
-function closeLogin() {
-    document.getElementById('loginModal').style.display = 'none';
-}
-
-// Initialize EmailJS (replace with your keys)
-(function() {
-    emailjs.init("fv7bcFtFncjEC38NP"); // Replace with your EmailJS user ID
-})();
-
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    
-    if (!email) {
-        alert('Please enter your email');
-        return;
-    }
-    
-    // Generate OTP
-    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-    
-    // Send OTP via EmailJS
-    const templateParams = {
-        to_email: email,
-        otp_code: generatedOTP,
-        subject: 'Your CV Builder OTP',
-        message: `Your OTP code is: ${generatedOTP}\nThis code will expire in 5 minutes.`
-    };
-    
-    emailjs.send('service_b0u7ona', 'template_o49zurn', templateParams)
-        .then(function(response) {
-            document.getElementById('loginStatus').innerHTML = 
-                '<div class="success">✅ OTP sent to your email!</div>';
-            document.getElementById('otpSection').style.display = 'block';
-            document.getElementById('loginEmail').disabled = true;
-            document.querySelector('#loginForm button').disabled = true;
-        }, function(error) {
-            document.getElementById('loginStatus').innerHTML = 
-                '<div class="error">❌ Failed to send OTP. Please try again.</div>';
-            console.error('EmailJS Error:', error);
-        });
-});
-
-function verifyOTP() {
-    const enteredOTP = document.getElementById('otpInput').value;
-    
-    if (enteredOTP === generatedOTP) {
-        loggedInUser = document.getElementById('loginEmail').value;
-        document.getElementById('loginStatus').innerHTML = 
-            '<div class="success">' + translations[currentLang].loginSuccess + '</div>';
-        document.getElementById('userStatus').textContent = '👤 ' + loggedInUser;
-        document.getElementById('loginBtn').innerHTML = '<i class="fas fa-check-circle"></i>';
-        setTimeout(closeLogin, 1500);
-    } else {
-        document.getElementById('loginStatus').innerHTML = 
-            '<div class="error">' + translations[currentLang].loginError + '</div>';
-    }
-}
-
-// ============================================
-// AUTO-LOAD PREFERENCES
-// ============================================
-// Load saved language
-const savedLang = localStorage.getItem('cv_language');
-if (savedLang) {
-    changeLanguage(savedLang);
-}
-
 // Load dark mode preference
-const darkMode = localStorage.getItem('cv_darkmode');
-if (darkMode === 'true') {
+if (localStorage.getItem('cv_darkmode') === 'true') {
     document.body.classList.add('dark-mode');
     document.getElementById('darkModeBtn').innerHTML = '<i class="fas fa-sun"></i>';
-}
-
-// Load saved CV data automatically
-window.onload = function() {
-    loadFromLocalStorage();
-};
-
-// Close modal on outside click
-window.onclick = function(event) {
-    const modal = document.getElementById('loginModal');
-    if (event.target === modal) {
-        closeLogin();
-    }
-};
-
-// ============================================
-// EMAILJS CONFIGURATION
-// ============================================
-// Initialize EmailJS with your User ID
-(function() {
-    emailjs.init("YOUR_USER_ID"); // Replace with your EmailJS User ID
-})();
-
-// Send OTP Email Function
-function sendOTPEmail(email, otpCode, userName) {
-    // Template parameters
-    const templateParams = {
-        to_name: userName || 'User',
-        to_email: email,
-        otp_code: otpCode,
-        subject: '🔐 Your CV Builder OTP Code',
-        // Optional: Add custom message
-        message: `Your OTP code is: ${otpCode}\nThis code will expire in 5 minutes.`
-    };
-    
-    // EmailJS send
-    return emailjs.send(
-        'service_b0u7ona',    // Replace with your Service ID
-        'template_o49zurn',   // Replace with your Template ID
-        templateParams
-    );
-}
-
-// ============================================
-// OTP GENERATION & SENDING
-// ============================================
-let generatedOTP = null;
-let otpTimer = null;
-const OTP_EXPIRY_TIME = 300000; // 5 minutes
-
-function generateOTP() {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
-function startOTPTimer() {
-    // Clear any existing timer
-    if (otpTimer) {
-        clearInterval(otpTimer);
-    }
-    
-    let timeLeft = 300; // 5 minutes in seconds
-    const timerDisplay = document.getElementById('otpTimerDisplay');
-    
-    if (timerDisplay) {
-        timerDisplay.style.display = 'block';
-    }
-    
-    otpTimer = setInterval(() => {
-        timeLeft--;
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
-        
-        if (timerDisplay) {
-            timerDisplay.textContent = `⏰ ${minutes}:${seconds.toString().padStart(2, '0')} remaining`;
-        }
-        
-        if (timeLeft <= 0) {
-            clearInterval(otpTimer);
-            generatedOTP = null;
-            if (timerDisplay) {
-                timerDisplay.textContent = '⏰ OTP expired. Please request a new one.';
-                timerDisplay.style.color = '#dc3545';
-            }
-        }
-    }, 1000);
-}
-
-// ============================================
-// LOGIN FORM HANDLER (Updated)
-// ============================================
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const email = document.getElementById('loginEmail').value;
-    const userName = document.getElementById('fullName').value || 'User';
-    
-    if (!email) {
-        alert('Please enter your email');
-        return;
-    }
-    
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        alert('Please enter a valid email address');
-        return;
-    }
-    
-    // Generate OTP
-    generatedOTP = generateOTP();
-    
-    // Show loading state
-    const sendBtn = document.querySelector('#loginForm button');
-    const originalText = sendBtn.innerHTML;
-    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-    sendBtn.disabled = true;
-    
-    // Send OTP via EmailJS
-    sendOTPEmail(email, generatedOTP, userName)
-        .then(function(response) {
-            // Success
-            document.getElementById('loginStatus').innerHTML = 
-                '<div class="success">✅ OTP sent successfully to your email!</div>';
-            document.getElementById('otpSection').style.display = 'block';
-            document.getElementById('loginEmail').disabled = true;
-            sendBtn.innerHTML = '✓ Sent';
-            sendBtn.style.background = '#28a745';
-            
-            // Start timer
-            startOTPTimer();
-            
-            // Auto-focus OTP input
-            document.getElementById('otpInput').focus();
-            
-            console.log('✅ EmailJS Success:', response);
-        })
-        .catch(function(error) {
-            // Error
-            document.getElementById('loginStatus').innerHTML = 
-                '<div class="error">❌ Failed to send OTP. Please try again.</div>';
-            sendBtn.innerHTML = originalText;
-            sendBtn.disabled = false;
-            console.error('❌ EmailJS Error:', error);
-        });
-});
-
-// ============================================
-// OTP VERIFICATION (Updated)
-// ============================================
-function verifyOTP() {
-    const enteredOTP = document.getElementById('otpInput').value;
-    const email = document.getElementById('loginEmail').value;
-    
-    if (!enteredOTP || enteredOTP.length !== 6) {
-        document.getElementById('loginStatus').innerHTML = 
-            '<div class="error">⚠️ Please enter a valid 6-digit OTP</div>';
-        return;
-    }
-    
-    if (enteredOTP === generatedOTP) {
-        // Success - Login
-        loggedInUser = email;
-        document.getElementById('loginStatus').innerHTML = 
-            '<div class="success">✅ ' + translations[currentLang].loginSuccess + '</div>';
-        document.getElementById('userStatus').textContent = '👤 ' + loggedInUser;
-        document.getElementById('loginBtn').innerHTML = '<i class="fas fa-check-circle"></i>';
-        
-        // Clear OTP timer
-        if (otpTimer) {
-            clearInterval(otpTimer);
-        }
-        
-        // Auto-save user preference
-        localStorage.setItem('cv_user_email', email);
-        
-        setTimeout(() => {
-            closeLogin();
-            // Auto-generate CV after login
-            generateCV();
-            // Auto-save data
-            saveToLocalStorage();
-        }, 1500);
-        
-    } else {
-        document.getElementById('loginStatus').innerHTML = 
-            '<div class="error">❌ ' + translations[currentLang].loginError + '</div>';
-        document.getElementById('otpInput').value = '';
-        document.getElementById('otpInput').focus();
-    }
-}
-
-// ============================================
-// RESEND OTP (Optional)
-// ============================================
-function resendOTP() {
-    const email = document.getElementById('loginEmail').value;
-    const userName = document.getElementById('fullName').value || 'User';
-    
-    if (!email) {
-        alert('Please enter your email');
-        return;
-    }
-    
-    // Generate new OTP
-    generatedOTP = generateOTP();
-    
-    const resendBtn = document.getElementById('resendBtn');
-    if (resendBtn) {
-        resendBtn.disabled = true;
-        resendBtn.textContent = '⏳ Sending...';
-    }
-    
-    // Send new OTP
-    sendOTPEmail(email, generatedOTP, userName)
-        .then(function(response) {
-            document.getElementById('loginStatus').innerHTML = 
-                '<div class="success">✅ New OTP sent successfully!</div>';
-            if (resendBtn) {
-                resendBtn.textContent = '✓ Sent';
-                resendBtn.style.background = '#28a745';
-                setTimeout(() => {
-                    resendBtn.disabled = false;
-                    resendBtn.textContent = '🔄 Resend OTP';
-                    resendBtn.style.background = '';
-                }, 3000);
-            }
-            // Restart timer
-            startOTPTimer();
-        })
-        .catch(function(error) {
-            document.getElementById('loginStatus').innerHTML = 
-                '<div class="error">❌ Failed to resend OTP. Please try again.</div>';
-            if (resendBtn) {
-                resendBtn.disabled = false;
-                resendBtn.textContent = '🔄 Resend OTP';
-            }
-            console.error('Error:', error);
-        });
 }
 
 // ============================================
 // KEYBOARD SHORTCUTS
 // ============================================
 document.addEventListener('keydown', function(e) {
-    // Ctrl + G = Generate CV
     if (e.ctrlKey && e.key === 'g') {
         e.preventDefault();
         generateCV();
     }
-    // Ctrl + S = Save Draft
     if (e.ctrlKey && e.key === 's') {
         e.preventDefault();
         saveToLocalStorage();
     }
-    // Ctrl + P = Print
-    if (e.ctrlKey && e.key === 'p') {
-        e.preventDefault();
-        printCV();
-    }
-    // Escape = Close Modal
     if (e.key === 'Escape') {
         closeLogin();
     }
 });
 
-console.log('🚀 Professional CV Builder Loaded!');
-console.log('💡 Shortcuts: Ctrl+G=Generate, Ctrl+S=Save, Ctrl+P=Print');
+console.log('🚀 Professional CV Builder Loaded Successfully!');
+console.log('💡 Shortcuts: Ctrl+G=Generate, Ctrl+S=Save');
