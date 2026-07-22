@@ -38,6 +38,23 @@
         </div>
     </div>
 
+    <!-- In login modal, inside otpSection -->
+<div id="otpSection" style="display:none;">
+    <div class="form-group">
+        <label id="otpLabel">Enter OTP Code</label>
+        <input type="text" id="otpInput" placeholder="6-digit OTP" maxlength="6">
+        <div id="otpTimerDisplay" style="font-size: 14px; color: #ff6b6b; margin-top: 8px;"></div>
+    </div>
+    <div style="display: flex; gap: 10px;">
+        <button onclick="verifyOTP()" class="btn-primary" id="verifyBtn" style="flex: 2;">
+            <i class="fas fa-check"></i> <span id="verifyText">Verify</span>
+        </button>
+        <button onclick="resendOTP()" class="btn-secondary" id="resendBtn" style="flex: 1;">
+            <i class="fas fa-redo"></i> Resend
+        </button>
+    </div>
+</div>
+
     <!-- Main Container -->
     <div class="container" id="mainContainer">
         <!-- Header -->
