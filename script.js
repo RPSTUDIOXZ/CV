@@ -1,3 +1,18 @@
+// Use environment variables
+const EMAILJS_CONFIG = {
+    userID: 'fv7bcFtFncjEC38NP',        // Replace with your User ID
+    serviceID: 'service_b0u7ona',  // Replace with your Service ID
+    templateID: 'template_o49zurn' // Replace with your Template ID
+};
+
+emailjs.init(EMAILJS_CONFIG.userID);
+
+// Send email
+emailjs.send(
+    EMAILJS_CONFIG.serviceID,
+    EMAILJS_CONFIG.templateID,
+    templateParams
+);
 // ============================================
 // LANGUAGE TRANSLATIONS
 // ============================================
@@ -522,7 +537,7 @@ function closeLogin() {
 
 // Initialize EmailJS (replace with your keys)
 (function() {
-    emailjs.init("YOUR_USER_ID"); // Replace with your EmailJS user ID
+    emailjs.init("fv7bcFtFncjEC38NP"); // Replace with your EmailJS user ID
 })();
 
 document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -545,7 +560,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         message: `Your OTP code is: ${generatedOTP}\nThis code will expire in 5 minutes.`
     };
     
-    emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+    emailjs.send('service_b0u7ona', 'template_o49zurn', templateParams)
         .then(function(response) {
             document.getElementById('loginStatus').innerHTML = 
                 '<div class="success">✅ OTP sent to your email!</div>';
@@ -626,8 +641,8 @@ function sendOTPEmail(email, otpCode, userName) {
     
     // EmailJS send
     return emailjs.send(
-        'YOUR_SERVICE_ID',    // Replace with your Service ID
-        'YOUR_TEMPLATE_ID',   // Replace with your Template ID
+        'service_b0u7ona',    // Replace with your Service ID
+        'template_o49zurn',   // Replace with your Template ID
         templateParams
     );
 }
