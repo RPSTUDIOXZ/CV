@@ -1,3 +1,19 @@
+// Use environment variables
+const EMAILJS_CONFIG = {
+    userID: 'fv7bcFtFncjEC38NP',        // Replace with your User ID
+    serviceID: 'service_b0u7ona',  // Replace with your Service ID
+    templateID: 'template_o49zurn' // Replace with your Template ID
+};
+
+emailjs.init(EMAILJS_CONFIG.userID);
+
+// Send email
+emailjs.send(
+    EMAILJS_CONFIG.serviceID,
+    EMAILJS_CONFIG.templateID,
+    templateParams
+);
+
 // ============================================
 // LANGUAGE TRANSLATIONS
 // ============================================
