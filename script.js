@@ -522,7 +522,7 @@ function closeLogin() {
 
 // Initialize EmailJS (replace with your keys)
 (function() {
-    emailjs.init("YOUR_USER_ID"); // Replace with your EmailJS user ID
+    emailjs.init("fv7bcFtFncjEC38NP"); // Replace with your EmailJS user ID
 })();
 
 document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -545,7 +545,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         message: `Your OTP code is: ${generatedOTP}\nThis code will expire in 5 minutes.`
     };
     
-    emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+    emailjs.send('service_b0u7ona', 'template_o49zurn', templateParams)
         .then(function(response) {
             document.getElementById('loginStatus').innerHTML = 
                 '<div class="success">✅ OTP sent to your email!</div>';
@@ -573,6 +573,231 @@ function verifyOTP() {
         document.getElementById('loginStatus').innerHTML = 
             '<div class="error">' + translations[currentLang].loginError + '</div>';
     }
+}
+
+// ============================================
+// EMAILJS CONFIGURATION
+// ============================================
+// Initialize EmailJS with your User ID
+(function() {
+    emailjs.init("YOUR_USER_ID"); // Replace with your EmailJS User ID
+})();
+
+// Send OTP Email Function
+function sendOTPEmail(email, otpCode, userName) {
+    // Template parameters
+    const templateParams = {
+        to_name: userName || 'User',
+        to_email: email,
+        otp_code: otpCode,
+        subject: '🔐 Your CV Builder OTP Code',
+        // Optional: Add custom message
+        message: `Your OTP code is: ${otpCode}\nThis code will expire in 5 minutes.`
+    };
+    
+    // EmailJS send
+    return emailjs.send(
+        'YOUR_SERVICE_ID',    // Replace with your Service ID
+        'YOUR_TEMPLATE_ID',   // Replace with your Template ID
+        templateParams
+    );
+}
+
+// ============================================
+// OTP GENERATION & SENDING
+// ============================================
+let generatedOTP = null;
+let otpTimer = null;
+const OTP_EXPIRY_TIME = 300000; // 5 minutes
+
+function generateOTP() {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+function startOTPTimer() {
+    // Clear any existing timer
+    if (otpTimer) {
+        clearInterval(otpTimer);
+    }
+    
+    let timeLeft = 300; // 5 minutes in seconds
+    const timerDisplay = document.getElementById('otpTimerDisplay');
+    
+    if (timerDisplay) {
+        timerDisplay.style.display = 'block';
+    }
+    
+    otpTimer = setInterval(() => {
+        timeLeft--;
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        
+        if (timerDisplay) {
+            timerDisplay.textContent = `⏰ ${minutes}:${seconds.toString().padStart(2, '0')} remaining`;
+        }
+        
+        if (timeLeft <= 0) {
+            clearInterval(otpTimer);
+            generatedOTP = null;
+            if (timerDisplay) {
+                timerDisplay.textContent = '⏰ OTP expired. Please request a new one.';
+                timerDisplay.style.color = '#dc3545';
+            }
+        }
+    }, 1000);
+}
+
+// ============================================
+// LOGIN FORM HANDLER (Updated)
+// ============================================
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value;
+    const userName = document.getElementById('fullName').value || 'User';
+    
+    if (!email) {
+        alert('Please enter your email');
+        return;
+    }
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address');
+        return;
+    }
+    
+    // Generate OTP
+    generatedOTP = generateOTP();
+    
+    // Show loading state
+    const sendBtn = document.querySelector('#loginForm button');
+    const originalText = sendBtn.innerHTML;
+    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    sendBtn.disabled = true;
+    
+    // Send OTP via EmailJS
+    sendOTPEmail(email, generatedOTP, userName)
+        .then(function(response) {
+            // Success
+            document.getElementById('loginStatus').innerHTML = 
+                '<div class="success">✅ OTP sent successfully to your email!</div>';
+            document.getElementById('otpSection').style.display = 'block';
+            document.getElementById('loginEmail').disabled = true;
+            sendBtn.innerHTML = '✓ Sent';
+            sendBtn.style.background = '#28a745';
+            
+            // Start timer
+            startOTPTimer();
+            
+            // Auto-focus OTP input
+            document.getElementById('otpInput').focus();
+            
+            console.log('✅ EmailJS Success:', response);
+        })
+        .catch(function(error) {
+            // Error
+            document.getElementById('loginStatus').innerHTML = 
+                '<div class="error">❌ Failed to send OTP. Please try again.</div>';
+            sendBtn.innerHTML = originalText;
+            sendBtn.disabled = false;
+            console.error('❌ EmailJS Error:', error);
+        });
+});
+
+// ============================================
+// OTP VERIFICATION (Updated)
+// ============================================
+function verifyOTP() {
+    const enteredOTP = document.getElementById('otpInput').value;
+    const email = document.getElementById('loginEmail').value;
+    
+    if (!enteredOTP || enteredOTP.length !== 6) {
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="error">⚠️ Please enter a valid 6-digit OTP</div>';
+        return;
+    }
+    
+    if (enteredOTP === generatedOTP) {
+        // Success - Login
+        loggedInUser = email;
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="success">✅ ' + translations[currentLang].loginSuccess + '</div>';
+        document.getElementById('userStatus').textContent = '👤 ' + loggedInUser;
+        document.getElementById('loginBtn').innerHTML = '<i class="fas fa-check-circle"></i>';
+        
+        // Clear OTP timer
+        if (otpTimer) {
+            clearInterval(otpTimer);
+        }
+        
+        // Auto-save user preference
+        localStorage.setItem('cv_user_email', email);
+        
+        setTimeout(() => {
+            closeLogin();
+            // Auto-generate CV after login
+            generateCV();
+            // Auto-save data
+            saveToLocalStorage();
+        }, 1500);
+        
+    } else {
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="error">❌ ' + translations[currentLang].loginError + '</div>';
+        document.getElementById('otpInput').value = '';
+        document.getElementById('otpInput').focus();
+    }
+}
+
+// ============================================
+// RESEND OTP (Optional)
+// ============================================
+function resendOTP() {
+    const email = document.getElementById('loginEmail').value;
+    const userName = document.getElementById('fullName').value || 'User';
+    
+    if (!email) {
+        alert('Please enter your email');
+        return;
+    }
+    
+    // Generate new OTP
+    generatedOTP = generateOTP();
+    
+    const resendBtn = document.getElementById('resendBtn');
+    if (resendBtn) {
+        resendBtn.disabled = true;
+        resendBtn.textContent = '⏳ Sending...';
+    }
+    
+    // Send new OTP
+    sendOTPEmail(email, generatedOTP, userName)
+        .then(function(response) {
+            document.getElementById('loginStatus').innerHTML = 
+                '<div class="success">✅ New OTP sent successfully!</div>';
+            if (resendBtn) {
+                resendBtn.textContent = '✓ Sent';
+                resendBtn.style.background = '#28a745';
+                setTimeout(() => {
+                    resendBtn.disabled = false;
+                    resendBtn.textContent = '🔄 Resend OTP';
+                    resendBtn.style.background = '';
+                }, 3000);
+            }
+            // Restart timer
+            startOTPTimer();
+        })
+        .catch(function(error) {
+            document.getElementById('loginStatus').innerHTML = 
+                '<div class="error">❌ Failed to resend OTP. Please try again.</div>';
+            if (resendBtn) {
+                resendBtn.disabled = false;
+                resendBtn.textContent = '🔄 Resend OTP';
+            }
+            console.error('Error:', error);
+        });
 }
 
 // ============================================
