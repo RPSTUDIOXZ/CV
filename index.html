@@ -4,255 +4,1379 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Professional CV Builder</title>
-    <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ===== RESET & BASE ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-primary: #f0f2f5;
+            --bg-secondary: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0,0,0,0.1);
+            --gradient-start: #667eea;
+            --gradient-end: #764ba2;
+            --card-bg: #f8f9fa;
+            --input-bg: #ffffff;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        /* ===== DARK MODE ===== */
+        body.dark-mode {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --border-color: #333355;
+            --shadow-color: rgba(0,0,0,0.3);
+            --card-bg: #1f1f3a;
+            --input-bg: #2a2a4a;
+        }
+
+        body.dark-mode .cv-preview.modern-template .cv-header {
+            background: linear-gradient(135deg, #4a5fc1, #5a3a8a);
+        }
+
+        body.dark-mode .tip-card { background: var(--bg-secondary); }
+        body.dark-mode .form-group input,
+        body.dark-mode .form-group textarea {
+            background: var(--input-bg);
+            color: var(--text-primary);
+        }
+        body.dark-mode .modal-content { background: var(--bg-secondary); }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px var(--shadow-color);
+            padding: 40px;
+            transition: all 0.3s ease;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* ===== LANGUAGE BUTTONS ===== */
+        .lang-group {
+            display: flex;
+            gap: 5px;
+            background: var(--card-bg);
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .lang-btn {
+            padding: 8px 14px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .lang-btn:hover { background: var(--bg-secondary); transform: translateY(-2px); }
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* ===== ICON BUTTONS ===== */
+        .icon-btn {
+            background: var(--card-bg);
+            border: none;
+            padding: 10px 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .icon-btn:hover { transform: scale(1.1); background: var(--gradient-start); color: white; }
+
+        /* ===== TIPS ===== */
+        .tips-section {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        .tips-section h3 { margin-bottom: 15px; color: var(--text-primary); }
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .tip-card {
+            background: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+        .tip-card:hover { transform: translateY(-3px); box-shadow: 0 5px 20px var(--shadow-color); }
+        .tip-card i { color: var(--gradient-start); font-size: 1.5rem; min-width: 30px; }
+        .tip-card p { font-size: 0.85rem; color: var(--text-secondary); margin: 0; }
+
+        /* ===== TEMPLATES ===== */
+        .template-selector { margin-bottom: 30px; }
+        .template-selector h3 { margin-bottom: 15px; color: var(--text-primary); }
+        .template-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .template-btn {
+            padding: 10px 25px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        .template-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px var(--shadow-color); }
+        .template-btn.active {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            border-color: transparent;
+        }
+
+        /* ===== MAIN GRID ===== */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        @media (max-width: 1024px) { .main-grid { grid-template-columns: 1fr; } }
+
+        /* ===== FORM ===== */
+        .form-section {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+        }
+        .form-section h2 { margin-bottom: 25px; color: var(--text-primary); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 16px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--gradient-start);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
+
+        /* ===== PHOTO UPLOAD ===== */
+        .photo-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .photo-upload input[type="file"] { display: none; }
+        .photo-label {
+            padding: 12px 30px;
+            background: var(--bg-secondary);
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+        }
+        .photo-label:hover { border-color: var(--gradient-start); background: var(--input-bg); }
+        #photoPreview img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--gradient-start);
+        }
+
+        /* ===== BUTTONS ===== */
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .btn-primary, .btn-secondary {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            justify-content: center;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+        .btn-secondary:hover { transform: translateY(-2px); border-color: var(--gradient-start); }
+
+        /* ===== PREVIEW ===== */
+        .preview-section {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+        }
+        .preview-section h2 { margin-bottom: 25px; color: var(--text-primary); }
+
+        .cv-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .cv-actions button {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 120px;
+        }
+        .cv-actions button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px var(--shadow-color); }
+        .btn-download { background: var(--success-color); color: white; }
+        .btn-print { background: #17a2b8; color: white; }
+        .btn-share { background: #6f42c1; color: white; }
+        .btn-clear { background: var(--danger-color); color: white; }
+
+        /* ===== CV PREVIEW ===== */
+        .cv-preview {
+            background: var(--bg-secondary);
+            padding: 40px;
+            border-radius: 15px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 5px 15px var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+
+        .cv-preview.modern-template .cv-header {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: -40px -40px 25px -40px;
+        }
+
+        .cv-preview.classic-template { border-left: 5px solid var(--gradient-start); }
+        .cv-preview.classic-template .cv-header {
+            padding: 30px;
+            margin: -40px -40px 25px -40px;
+            border-bottom: 3px solid var(--gradient-start);
+        }
+
+        .cv-preview.creative-template .cv-header {
+            background: white;
+            border-bottom: 3px solid var(--gradient-start);
+            padding: 30px;
+            margin: -40px -40px 25px -40px;
+            border-radius: 10px 10px 0 0;
+        }
+        .cv-preview.creative-template .cv-header h2,
+        .cv-preview.creative-template .cv-header p { color: var(--text-primary); }
+
+        .cv-profile {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+        .cv-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .cv-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .cv-header-text h2 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            border: none;
+            color: inherit;
+        }
+        .cv-job-title { font-size: 1.1rem; opacity: 0.9; margin-bottom: 10px; }
+        .cv-contact { font-size: 0.9rem; opacity: 0.85; margin: 3px 0; }
+        .cv-body { padding: 0 10px; }
+        .cv-section { margin-bottom: 25px; }
+        .cv-section h3 {
+            color: var(--gradient-start);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+        .cv-section p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        .skills-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .skill-tag {
+            background: var(--card-bg);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-content {
+            background: var(--bg-secondary);
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        .close:hover { transform: rotate(90deg); color: var(--danger-color); }
+
+        #loginStatus {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        #loginStatus.success { background: #d4edda; color: #155724; }
+        #loginStatus.error { background: #f8d7da; color: #721c24; }
+        #userStatus { font-weight: 600; color: var(--success-color); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .header h1 { font-size: 1.4rem; }
+            .cv-profile { flex-direction: column; text-align: center; }
+            .cv-preview { padding: 20px; }
+            .cv-preview.modern-template .cv-header,
+            .cv-preview.classic-template .cv-header,
+            .cv-preview.creative-template .cv-header {
+                margin: -20px -20px 20px -20px;
+                padding: 20px;
+            }
+            .tips-grid { grid-template-columns: 1fr; }
+            .form-actions { flex-direction: column; }
+            .cv-actions { flex-direction: column; }
+            .cv-actions button { width: 100%; }
+            .template-buttons { flex-direction: column; }
+            .template-btn { width: 100%; text-align: center; }
+            .lang-group { flex-wrap: wrap; }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 { font-size: 1.1rem; }
+            .header-actions { width: 100%; justify-content: flex-end; }
+            .form-section, .preview-section { padding: 15px; }
+            .cv-photo { width: 80px; height: 80px; font-size: 2.5rem; }
+            .cv-header-text h2 { font-size: 1.3rem; }
+        }
+    </style>
 </head>
 <body>
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeLogin()">&times;</span>
-            <h2><i class="fas fa-sign-in-alt"></i> <span id="loginTitle">Login to Save CV</span></h2>
-            <p id="loginSubtitle">Enter your email to receive OTP</p>
-            <form id="loginForm" onsubmit="sendOTP(event)">
-                <div class="form-group">
-                    <label><i class="fas fa-envelope"></i> Email Address</label>
-                    <input type="email" id="loginEmail" placeholder="your@email.com" required>
-                </div>
-                <button type="submit" class="btn-primary" id="sendOtpBtn">
-                    <i class="fas fa-paper-plane"></i> <span id="sendOtpText">Send OTP</span>
-                </button>
-            </form>
-            <div id="otpSection" style="display:none;">
-                <div class="form-group">
-                    <label><i class="fas fa-key"></i> Enter OTP Code</label>
-                    <input type="text" id="otpInput" placeholder="6-digit OTP" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                    <div id="otpTimerDisplay" style="font-size: 14px; color: #ff6b6b; margin-top: 8px;"></div>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="verifyOTP()" class="btn-primary" id="verifyBtn" style="flex: 2;">
-                        <i class="fas fa-check"></i> <span id="verifyText">Verify</span>
-                    </button>
-                    <button onclick="resendOTP()" class="btn-secondary" id="resendBtn" style="flex: 1;">
-                        <i class="fas fa-redo"></i> Resend
-                    </button>
-                </div>
+
+<!-- ============================================
+LOGIN MODAL
+============================================ -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeLogin()">&times;</span>
+        <h2 id="loginTitle"><i class="fas fa-sign-in-alt"></i> Login to Save CV</h2>
+        <p id="loginSubtitle">Enter your email to receive OTP</p>
+        <form id="loginForm" onsubmit="sendOTP(event)">
+            <div class="form-group">
+                <label id="emailLabel"><i class="fas fa-envelope"></i> Email Address</label>
+                <input type="email" id="loginEmail" placeholder="your@email.com" required>
             </div>
-            <div id="loginStatus"></div>
+            <button type="submit" class="btn-primary" id="sendOtpBtn">
+                <i class="fas fa-paper-plane"></i> <span id="sendOtpText">Send OTP</span>
+            </button>
+        </form>
+        <div id="otpSection" style="display:none;">
+            <div class="form-group">
+                <label id="otpLabel"><i class="fas fa-key"></i> Enter OTP Code</label>
+                <input type="text" id="otpInput" placeholder="6-digit OTP" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                <div id="otpTimerDisplay" style="font-size: 14px; color: #ff6b6b; margin-top: 8px;"></div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="verifyOTP()" class="btn-primary" id="verifyBtn" style="flex: 2;">
+                    <i class="fas fa-check"></i> <span id="verifyText">Verify</span>
+                </button>
+                <button onclick="resendOTP()" class="btn-secondary" id="resendBtn" style="flex: 1;">
+                    <i class="fas fa-redo"></i> Resend
+                </button>
+            </div>
+        </div>
+        <div id="loginStatus"></div>
+    </div>
+</div>
+
+<!-- ============================================
+MAIN CONTAINER
+============================================ -->
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1 id="appTitle"><i class="fas fa-file-alt"></i> Professional CV Builder</h1>
+        <div class="header-actions">
+            <!-- Language Buttons -->
+            <div class="lang-group">
+                <button onclick="changeLanguage('en')" class="lang-btn active" data-lang="en">🇬🇧 EN</button>
+                <button onclick="changeLanguage('si')" class="lang-btn" data-lang="si">🇱🇰 SI</button>
+                <button onclick="changeLanguage('tm')" class="lang-btn" data-lang="tm">🇱🇰 TM</button>
+            </div>
+            <button onclick="toggleDarkMode()" class="icon-btn" id="darkModeBtn">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button onclick="showLogin()" class="icon-btn" id="loginBtn">
+                <i class="fas fa-user"></i>
+            </button>
+            <span id="userStatus"></span>
         </div>
     </div>
 
-    <!-- Main Container -->
-    <div class="container" id="mainContainer">
-        <!-- Header -->
-        <div class="header">
-            <h1><i class="fas fa-file-alt"></i> Professional CV Builder</h1>
-            <div class="header-actions">
-                <button onclick="toggleDarkMode()" class="icon-btn" id="darkModeBtn">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <button onclick="showLogin()" class="icon-btn" id="loginBtn">
-                    <i class="fas fa-user"></i>
-                </button>
-                <span id="userStatus"></span>
-            </div>
-        </div>
-
-        <!-- Professional Tips -->
-        <div class="tips-section">
-            <h3><i class="fas fa-lightbulb"></i> Professional Tips</h3>
-            <div class="tips-grid">
-                <div class="tip-card">
-                    <i class="fas fa-font"></i>
-                    <p>Font sizes: 11-12pt body, 14-16pt headings</p>
-                </div>
-                <div class="tip-card">
-                    <i class="fas fa-arrows-alt"></i>
-                    <p>Keep white space - don't overcrowd</p>
-                </div>
-                <div class="tip-card">
-                    <i class="fas fa-bolt"></i>
-                    <p>Use action verbs: Developed, Managed, Created</p>
-                </div>
-                <div class="tip-card">
-                    <i class="fas fa-chart-line"></i>
-                    <p>Quantify achievements: "Increased sales by 20%"</p>
-                </div>
-                <div class="tip-card">
-                    <i class="fas fa-check-circle"></i>
-                    <p>Fit perfectly on A4 size</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Template Selector -->
-        <div class="template-selector">
-            <h3><i class="fas fa-palette"></i> Choose Template</h3>
-            <div class="template-buttons">
-                <button onclick="changeTemplate('modern')" class="template-btn active" data-template="modern">
-                    <i class="fas fa-layer-group"></i> Modern
-                </button>
-                <button onclick="changeTemplate('classic')" class="template-btn" data-template="classic">
-                    <i class="fas fa-book"></i> Classic
-                </button>
-                <button onclick="changeTemplate('creative')" class="template-btn" data-template="creative">
-                    <i class="fas fa-paint-brush"></i> Creative
-                </button>
-            </div>
-        </div>
-
-        <div class="main-grid">
-            <!-- Form Section -->
-            <div class="form-section">
-                <h2><i class="fas fa-edit"></i> Enter Your Details</h2>
-                
-                <!-- Profile Photo -->
-                <div class="form-group">
-                    <label><i class="fas fa-camera"></i> Profile Photo</label>
-                    <div class="photo-upload">
-                        <input type="file" id="photoUpload" accept="image/*" onchange="uploadPhoto(event)">
-                        <label for="photoUpload" class="photo-label">
-                            <i class="fas fa-plus-circle"></i> Upload Photo
-                        </label>
-                        <div id="photoPreview"></div>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label><i class="fas fa-user"></i> Full Name</label>
-                        <input type="text" id="fullName" placeholder="Kamal Perera">
-                    </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-briefcase"></i> Job Title</label>
-                        <input type="text" id="jobTitle" placeholder="Software Engineer">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label><i class="fas fa-envelope"></i> Email</label>
-                        <input type="email" id="email" placeholder="kamal@gmail.com">
-                    </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-phone"></i> Phone</label>
-                        <input type="text" id="phone" placeholder="071-2345678">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-map-marker-alt"></i> Address</label>
-                    <input type="text" id="address" placeholder="Colombo, Sri Lanka">
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-graduation-cap"></i> Education</label>
-                    <textarea id="education" rows="3" placeholder="University of Colombo - BSc (Hons) Computer Science"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-briefcase"></i> Work Experience</label>
-                    <textarea id="experience" rows="4" placeholder="ABC Company - Software Engineer (2020-Present)&#10;• Developed web applications using React&#10;• Increased performance by 30%"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-code"></i> Skills</label>
-                    <textarea id="skills" rows="3" placeholder="JavaScript, Python, React, PHP, Node.js"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-certificate"></i> Certifications</label>
-                    <textarea id="certifications" rows="2" placeholder="AWS Certified Developer, IELTS 7.5"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-link"></i> Portfolio/Website</label>
-                    <input type="text" id="portfolio" placeholder="https://yourportfolio.com">
-                </div>
-
-                <div class="form-actions">
-                    <button onclick="generateCV()" class="btn-primary">
-                        <i class="fas fa-magic"></i> Generate CV
-                    </button>
-                    <button onclick="saveToLocalStorage()" class="btn-secondary">
-                        <i class="fas fa-save"></i> Save Draft
-                    </button>
-                    <button onclick="loadFromLocalStorage()" class="btn-secondary">
-                        <i class="fas fa-upload"></i> Load Draft
-                    </button>
-                </div>
-            </div>
-
-            <!-- Preview Section -->
-            <div class="preview-section">
-                <h2><i class="fas fa-eye"></i> CV Preview</h2>
-                
-                <div class="cv-actions">
-                    <button onclick="downloadPDF()" class="btn-download">
-                        <i class="fas fa-file-pdf"></i> PDF Download
-                    </button>
-                    <button onclick="printCV()" class="btn-print">
-                        <i class="fas fa-print"></i> Print
-                    </button>
-                    <button onclick="shareCV()" class="btn-share">
-                        <i class="fas fa-share-alt"></i> Share
-                    </button>
-                    <button onclick="clearAll()" class="btn-clear">
-                        <i class="fas fa-trash"></i> Clear
-                    </button>
-                </div>
-
-                <div id="cvPreview" class="cv-preview modern-template">
-                    <div class="cv-header">
-                        <div class="cv-profile">
-                            <div id="cvPhoto" class="cv-photo">
-                                <i class="fas fa-user-circle"></i>
-                            </div>
-                            <div class="cv-header-text">
-                                <h2 id="cvName">Your Name</h2>
-                                <p class="cv-job-title" id="cvJobTitle">Job Title</p>
-                                <p class="cv-contact" id="cvEmail">📧 Email</p>
-                                <p class="cv-contact" id="cvPhone">📞 Phone</p>
-                                <p class="cv-contact" id="cvAddress">📍 Address</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="cv-body">
-                        <div class="cv-section">
-                            <h3><i class="fas fa-graduation-cap"></i> Education</h3>
-                            <p id="cvEducation">Education details appear here</p>
-                        </div>
-                        
-                        <div class="cv-section">
-                            <h3><i class="fas fa-briefcase"></i> Work Experience</h3>
-                            <p id="cvExperience">Work experience appears here</p>
-                        </div>
-                        
-                        <div class="cv-section">
-                            <h3><i class="fas fa-code"></i> Skills</h3>
-                            <div id="cvSkills" class="skills-tags">
-                                <span class="skill-tag">Skill</span>
-                            </div>
-                        </div>
-                        
-                        <div class="cv-section">
-                            <h3><i class="fas fa-certificate"></i> Certifications</h3>
-                            <p id="cvCertifications">Certifications appear here</p>
-                        </div>
-
-                        <div class="cv-section">
-                            <h3><i class="fas fa-link"></i> Portfolio</h3>
-                            <p id="cvPortfolio">https://yourportfolio.com</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- PROFESSIONAL TIPS -->
+    <div class="tips-section">
+        <h3 id="tipsTitle"><i class="fas fa-lightbulb"></i> Professional Tips</h3>
+        <div class="tips-grid">
+            <div class="tip-card"><i class="fas fa-font"></i><p id="tip1">Font sizes: 11-12pt body, 14-16pt headings</p></div>
+            <div class="tip-card"><i class="fas fa-arrows-alt"></i><p id="tip2">Keep white space - don't overcrowd</p></div>
+            <div class="tip-card"><i class="fas fa-bolt"></i><p id="tip3">Use action verbs: Developed, Managed, Created</p></div>
+            <div class="tip-card"><i class="fas fa-chart-line"></i><p id="tip4">Quantify achievements: "Increased sales by 20%"</p></div>
+            <div class="tip-card"><i class="fas fa-check-circle"></i><p id="tip5">Fit perfectly on A4 size</p></div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- TEMPLATE SELECTOR -->
+    <div class="template-selector">
+        <h3 id="templateTitle"><i class="fas fa-palette"></i> Choose Template</h3>
+        <div class="template-buttons">
+            <button onclick="changeTemplate('modern')" class="template-btn active" data-template="modern">
+                <i class="fas fa-layer-group"></i> <span id="templateModern">Modern</span>
+            </button>
+            <button onclick="changeTemplate('classic')" class="template-btn" data-template="classic">
+                <i class="fas fa-book"></i> <span id="templateClassic">Classic</span>
+            </button>
+            <button onclick="changeTemplate('creative')" class="template-btn" data-template="creative">
+                <i class="fas fa-paint-brush"></i> <span id="templateCreative">Creative</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+
+        <!-- FORM SECTION -->
+        <div class="form-section">
+            <h2 id="formTitle"><i class="fas fa-edit"></i> Enter Your Details</h2>
+
+            <div class="form-group">
+                <label id="photoLabel"><i class="fas fa-camera"></i> Profile Photo</label>
+                <div class="photo-upload">
+                    <input type="file" id="photoUpload" accept="image/*" onchange="uploadPhoto(event)">
+                    <label for="photoUpload" class="photo-label">
+                        <i class="fas fa-plus-circle"></i> <span id="uploadPhotoText">Upload Photo</span>
+                    </label>
+                    <div id="photoPreview"></div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label id="fullNameLabel"><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="fullName" placeholder="Kamal Perera">
+                </div>
+                <div class="form-group">
+                    <label id="jobTitleLabel"><i class="fas fa-briefcase"></i> Job Title</label>
+                    <input type="text" id="jobTitle" placeholder="Software Engineer">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label id="emailLabelForm"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="email" placeholder="kamal@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label id="phoneLabel"><i class="fas fa-phone"></i> Phone</label>
+                    <input type="text" id="phone" placeholder="071-2345678">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label id="addressLabel"><i class="fas fa-map-marker-alt"></i> Address</label>
+                <input type="text" id="address" placeholder="Colombo, Sri Lanka">
+            </div>
+
+            <div class="form-group">
+                <label id="educationLabel"><i class="fas fa-graduation-cap"></i> Education</label>
+                <textarea id="education" rows="3" placeholder="University of Colombo - BSc (Hons) Computer Science"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label id="experienceLabel"><i class="fas fa-briefcase"></i> Work Experience</label>
+                <textarea id="experience" rows="4" placeholder="ABC Company - Software Engineer (2020-Present)&#10;• Developed web applications using React&#10;• Increased performance by 30%"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label id="skillsLabel"><i class="fas fa-code"></i> Skills</label>
+                <textarea id="skills" rows="3" placeholder="JavaScript, Python, React, PHP, Node.js"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label id="certificationsLabel"><i class="fas fa-certificate"></i> Certifications</label>
+                <textarea id="certifications" rows="2" placeholder="AWS Certified Developer, IELTS 7.5"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label id="portfolioLabel"><i class="fas fa-link"></i> Portfolio/Website</label>
+                <input type="text" id="portfolio" placeholder="https://yourportfolio.com">
+            </div>
+
+            <div class="form-actions">
+                <button onclick="generateCV()" class="btn-primary">
+                    <i class="fas fa-magic"></i> <span id="generateBtn">Generate CV</span>
+                </button>
+                <button onclick="saveToLocalStorage()" class="btn-secondary">
+                    <i class="fas fa-save"></i> <span id="saveDraftBtn">Save Draft</span>
+                </button>
+                <button onclick="loadFromLocalStorage()" class="btn-secondary">
+                    <i class="fas fa-upload"></i> <span id="loadDraftBtn">Load Draft</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- PREVIEW SECTION -->
+        <div class="preview-section">
+            <h2 id="previewTitle"><i class="fas fa-eye"></i> CV Preview</h2>
+
+            <div class="cv-actions">
+                <button onclick="downloadPDF()" class="btn-download">
+                    <i class="fas fa-file-pdf"></i> <span id="pdfBtn">PDF Download</span>
+                </button>
+                <button onclick="printCV()" class="btn-print">
+                    <i class="fas fa-print"></i> <span id="printBtn">Print</span>
+                </button>
+                <button onclick="shareCV()" class="btn-share">
+                    <i class="fas fa-share-alt"></i> <span id="shareBtn">Share</span>
+                </button>
+                <button onclick="clearAll()" class="btn-clear">
+                    <i class="fas fa-trash"></i> <span id="clearBtn">Clear</span>
+                </button>
+            </div>
+
+            <div id="cvPreview" class="cv-preview modern-template">
+                <div class="cv-header">
+                    <div class="cv-profile">
+                        <div id="cvPhoto" class="cv-photo">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="cv-header-text">
+                            <h2 id="cvName">Your Name</h2>
+                            <p class="cv-job-title" id="cvJobTitle">Job Title</p>
+                            <p class="cv-contact" id="cvEmail">📧 Email</p>
+                            <p class="cv-contact" id="cvPhone">📞 Phone</p>
+                            <p class="cv-contact" id="cvAddress">📍 Address</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="cv-body">
+                    <div class="cv-section">
+                        <h3 id="cvEducationTitle"><i class="fas fa-graduation-cap"></i> Education</h3>
+                        <p id="cvEducation">Education details appear here</p>
+                    </div>
+                    <div class="cv-section">
+                        <h3 id="cvExperienceTitle"><i class="fas fa-briefcase"></i> Work Experience</h3>
+                        <p id="cvExperience">Work experience appears here</p>
+                    </div>
+                    <div class="cv-section">
+                        <h3 id="cvSkillsTitle"><i class="fas fa-code"></i> Skills</h3>
+                        <div id="cvSkills" class="skills-tags">
+                            <span class="skill-tag">Skill</span>
+                        </div>
+                    </div>
+                    <div class="cv-section">
+                        <h3 id="cvCertificationsTitle"><i class="fas fa-certificate"></i> Certifications</h3>
+                        <p id="cvCertifications">Certifications appear here</p>
+                    </div>
+                    <div class="cv-section">
+                        <h3 id="cvPortfolioTitle"><i class="fas fa-link"></i> Portfolio</h3>
+                        <p id="cvPortfolio">https://yourportfolio.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end main-grid -->
+</div><!-- end container -->
+
+<!-- ============================================
+JAVASCRIPT - All in One
+============================================ -->
+<script>
+// ============================================
+// EMAILJS CONFIGURATION
+// ============================================
+const EMAILJS_CONFIG = {
+    userID: 'fv7bcFtFncjEC38NP',
+    serviceID: 'service_b0u7ona',
+    templateID: 'template_o49zurn'
+};
+
+// Initialize EmailJS
+(function() {
+    try {
+        emailjs.init(EMAILJS_CONFIG.userID);
+        console.log('✅ EmailJS initialized successfully!');
+    } catch(e) {
+        console.error('❌ EmailJS init error:', e);
+    }
+})();
+
+// ============================================
+// TRANSLATIONS
+// ============================================
+const translations = {
+    en: {
+        appTitle: "Professional CV Builder",
+        tipsTitle: "Professional Tips",
+        tip1: "Font sizes: 11-12pt body, 14-16pt headings",
+        tip2: "Keep white space - don't overcrowd",
+        tip3: "Use action verbs: Developed, Managed, Created",
+        tip4: "Quantify achievements: 'Increased sales by 20%'",
+        tip5: "Fit perfectly on A4 size",
+        templateTitle: "Choose Template",
+        templateModern: "Modern",
+        templateClassic: "Classic",
+        templateCreative: "Creative",
+        formTitle: "Enter Your Details",
+        photoLabel: "Profile Photo",
+        uploadPhotoText: "Upload Photo",
+        fullNameLabel: "Full Name",
+        jobTitleLabel: "Job Title",
+        emailLabelForm: "Email",
+        phoneLabel: "Phone",
+        addressLabel: "Address",
+        educationLabel: "Education",
+        experienceLabel: "Work Experience",
+        skillsLabel: "Skills",
+        certificationsLabel: "Certifications",
+        portfolioLabel: "Portfolio/Website",
+        generateBtn: "Generate CV",
+        saveDraftBtn: "Save Draft",
+        loadDraftBtn: "Load Draft",
+        previewTitle: "CV Preview",
+        pdfBtn: "PDF Download",
+        printBtn: "Print",
+        shareBtn: "Share",
+        clearBtn: "Clear",
+        cvEducationTitle: "Education",
+        cvExperienceTitle: "Work Experience",
+        cvSkillsTitle: "Skills",
+        cvCertificationsTitle: "Certifications",
+        cvPortfolioTitle: "Portfolio",
+        loginTitle: "Login to Save CV",
+        loginSubtitle: "Enter your email to receive OTP",
+        emailLabel: "Email Address",
+        sendOtpText: "Send OTP",
+        otpLabel: "Enter OTP Code",
+        verifyText: "Verify",
+        loginSuccess: "✅ Login successful!",
+        loginError: "❌ Invalid OTP. Please try again.",
+        shareText: "Check out my professional CV!",
+        clearConfirm: "Are you sure you want to clear all data?",
+        loadingPDF: "Generating PDF..."
+    },
+    si: {
+        appTitle: "වෘත්තීය CV නිර්මාණය",
+        tipsTitle: "වෘත්තීය උපදෙස්",
+        tip1: "අකුරු ප්‍රමාණ: 11-12pt සිරුර, 14-16pt ශීර්ෂ",
+        tip2: "හිස් ඉඩ තබන්න - ඕනෑවට වඩා පුරවන්න එපා",
+        tip3: "ක්‍රියා පද භාවිතා කරන්න: සංවර්ධනය, කළමනාකරණය, නිර්මාණය",
+        tip4: "ජයග්‍රහණ ප්‍රමාණනය කරන්න: 'විකුණුම් 20% කින් වැඩි කළා'",
+        tip5: "A4 ප්‍රමාණයට හරියටම ගැලපෙන්න",
+        templateTitle: "අච්චුව තෝරන්න",
+        templateModern: "නවීන",
+        templateClassic: "සම්භාව්‍ය",
+        templateCreative: "නිර්මාණශීලී",
+        formTitle: "ඔබගේ විස්තර ඇතුලත් කරන්න",
+        photoLabel: "ප්‍රොෆයිල් ඡායාරූපය",
+        uploadPhotoText: "ඡායාරූපය උඩුගත කරන්න",
+        fullNameLabel: "පූර්ණ නම",
+        jobTitleLabel: "රැකියා තනතුර",
+        emailLabelForm: "විද්‍යුත් තැපෑල",
+        phoneLabel: "දුරකථන අංකය",
+        addressLabel: "ලිපිනය",
+        educationLabel: "අධ්‍යාපනය",
+        experienceLabel: "වැඩ පළපුරුද්ද",
+        skillsLabel: "කුසලතා",
+        certificationsLabel: "සහතික",
+        portfolioLabel: "වෙබ් අඩවිය/වරාය",
+        generateBtn: "CV එක සාදන්න",
+        saveDraftBtn: "කෙටුම්පත සුරකින්න",
+        loadDraftBtn: "කෙටුම්පත පටවන්න",
+        previewTitle: "CV පෙරදසුන",
+        pdfBtn: "PDF බාගන්න",
+        printBtn: "මුද්‍රණය",
+        shareBtn: "බෙදාගන්න",
+        clearBtn: "ඉවත් කරන්න",
+        cvEducationTitle: "අධ්‍යාපනය",
+        cvExperienceTitle: "වැඩ පළපුරුද්ද",
+        cvSkillsTitle: "කුසලතා",
+        cvCertificationsTitle: "සහතික",
+        cvPortfolioTitle: "වෙබ් අඩවිය",
+        loginTitle: "CV එක සුරැකීමට පිවිසෙන්න",
+        loginSubtitle: "OTP එක ලබා ගැනීමට ඔබගේ විද්‍යුත් තැපෑල ඇතුලත් කරන්න",
+        emailLabel: "විද්‍යුත් තැපෑල",
+        sendOtpText: "OTP එක යවන්න",
+        otpLabel: "OTP කේතය ඇතුලත් කරන්න",
+        verifyText: "තහවුරු කරන්න",
+        loginSuccess: "✅ පිවිසුම සාර්ථකයි!",
+        loginError: "❌ වලංගු OTP එකක් නොවේ. නැවත උත්සාහ කරන්න.",
+        shareText: "මගේ වෘත්තීය CV එක බලන්න!",
+        clearConfirm: "ඔබට සියලු දත්ත මකා දැමීමට අවශ්‍යද?",
+        loadingPDF: "PDF එක සාදමින්..."
+    },
+    tm: {
+        appTitle: "தொழில்முறை CV உருவாக்கி",
+        tipsTitle: "தொழில்முறை குறிப்புகள்",
+        tip1: "எழுத்துரு அளவு: 11-12pt உடல், 14-16pt தலைப்புகள்",
+        tip2: "வெற்று இடத்தை வைத்திருங்கள் - நெருக்கடியாக்க வேண்டாம்",
+        tip3: "செயல் வினைச்சொற்களைப் பயன்படுத்தவும்: உருவாக்கப்பட்டது, நிர்வகிக்கப்பட்டது, உருவாக்கப்பட்டது",
+        tip4: "சாதனைகளை அளவிடவும்: 'விற்பனை 20% அதிகரித்தது'",
+        tip5: "A4 அளவில் சரியாக பொருந்தும்",
+        templateTitle: "வார்ப்புருவை தேர்ந்தெடுக்கவும்",
+        templateModern: "நவீன",
+        templateClassic: "பாரம்பரிய",
+        templateCreative: "படைப்பு",
+        formTitle: "உங்கள் விவரங்களை உள்ளிடுக",
+        photoLabel: "சுயவிவர புகைப்படம்",
+        uploadPhotoText: "புகைப்படத்தை பதிவேற்றவும்",
+        fullNameLabel: "முழு பெயர்",
+        jobTitleLabel: "பணி தலைப்பு",
+        emailLabelForm: "மின்னஞ்சல்",
+        phoneLabel: "தொலைபேசி",
+        addressLabel: "முகவரி",
+        educationLabel: "கல்வி",
+        experienceLabel: "பணி அனுபவம்",
+        skillsLabel: "திறன்கள்",
+        certificationsLabel: "சான்றிதழ்கள்",
+        portfolioLabel: "இணையதளம்/துறைமுகம்",
+        generateBtn: "CV உருவாக்கு",
+        saveDraftBtn: "வரைவை சேமிக்கவும்",
+        loadDraftBtn: "வரைவை ஏற்றவும்",
+        previewTitle: "CV முன்னோட்டம்",
+        pdfBtn: "PDF பதிவிறக்கம்",
+        printBtn: "அச்சிடுக",
+        shareBtn: "பகிர்",
+        clearBtn: "அழிக்கவும்",
+        cvEducationTitle: "கல்வி",
+        cvExperienceTitle: "பணி அனுபவம்",
+        cvSkillsTitle: "திறன்கள்",
+        cvCertificationsTitle: "சான்றிதழ்கள்",
+        cvPortfolioTitle: "இணையதளம்",
+        loginTitle: "CV ஐ சேமிக்க உள்நுழைக",
+        loginSubtitle: "OTP பெற உங்கள் மின்னஞ்சலை உள்ளிடுக",
+        emailLabel: "மின்னஞ்சல் முகவரி",
+        sendOtpText: "OTP அனுப்புக",
+        otpLabel: "OTP குறியீட்டை உள்ளிடுக",
+        verifyText: "சரிபார்க்கவும்",
+        loginSuccess: "✅ உள்நுழைவு வெற்றிகரமானது!",
+        loginError: "❌ தவறான OTP. மீண்டும் முயற்சிக்கவும்.",
+        shareText: "எனது தொழில்முறை CV ஐ பாருங்கள்!",
+        clearConfirm: "அனைத்து தரவுகளையும் நீக்க வேண்டுமா?",
+        loadingPDF: "PDF உருவாக்குகிறது..."
+    }
+};
+
+let currentLang = 'en';
+let currentTemplate = 'modern';
+let photoData = null;
+let generatedOTP = null;
+let otpTimer = null;
+let loggedInUser = null;
+
+// ============================================
+// LANGUAGE CHANGE
+// ============================================
+function changeLanguage(lang) {
+    currentLang = lang;
+    
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.lang === lang) btn.classList.add('active');
+    });
+    
+    const t = translations[lang];
+    document.querySelectorAll('[id]').forEach(el => {
+        if (t[el.id] !== undefined) {
+            el.textContent = t[el.id];
+        }
+    });
+    
+    localStorage.setItem('cv_language', lang);
+}
+
+// ============================================
+// DARK MODE
+// ============================================
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const btn = document.getElementById('darkModeBtn');
+    if (document.body.classList.contains('dark-mode')) {
+        btn.innerHTML = '<i class="fas fa-sun"></i>';
+        localStorage.setItem('cv_darkmode', 'true');
+    } else {
+        btn.innerHTML = '<i class="fas fa-moon"></i>';
+        localStorage.setItem('cv_darkmode', 'false');
+    }
+}
+
+// ============================================
+// TEMPLATE CHANGE
+// ============================================
+function changeTemplate(template) {
+    currentTemplate = template;
+    document.querySelectorAll('.template-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.template === template) btn.classList.add('active');
+    });
+    document.getElementById('cvPreview').className = 'cv-preview ' + template + '-template';
+}
+
+// ============================================
+// PHOTO UPLOAD
+// ============================================
+function uploadPhoto(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            photoData = e.target.result;
+            document.getElementById('photoPreview').innerHTML = `<img src="${photoData}" alt="Profile">`;
+            document.getElementById('cvPhoto').innerHTML = `<img src="${photoData}" alt="Profile">`;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// ============================================
+// GENERATE CV
+// ============================================
+function generateCV() {
+    const name = document.getElementById('fullName').value || 'Your Name';
+    const jobTitle = document.getElementById('jobTitle').value || 'Job Title';
+    const email = document.getElementById('email').value || 'Email';
+    const phone = document.getElementById('phone').value || 'Phone';
+    const address = document.getElementById('address').value || 'Address';
+    const education = document.getElementById('education').value || 'Education details appear here';
+    const experience = document.getElementById('experience').value || 'Work experience appears here';
+    const skills = document.getElementById('skills').value || 'Skills';
+    const certifications = document.getElementById('certifications').value || 'Certifications appear here';
+    const portfolio = document.getElementById('portfolio').value || 'https://yourportfolio.com';
+    
+    document.getElementById('cvName').textContent = name;
+    document.getElementById('cvJobTitle').textContent = jobTitle;
+    document.getElementById('cvEmail').textContent = '📧 ' + email;
+    document.getElementById('cvPhone').textContent = '📞 ' + phone;
+    document.getElementById('cvAddress').textContent = '📍 ' + address;
+    document.getElementById('cvEducation').textContent = education;
+    document.getElementById('cvExperience').textContent = experience;
+    
+    const skillsArray = skills.split(',').map(s => s.trim()).filter(s => s);
+    const skillsContainer = document.getElementById('cvSkills');
+    if (skillsArray.length > 0 && skillsArray[0] !== 'Skills') {
+        skillsContainer.innerHTML = skillsArray.map(s => `<span class="skill-tag">${s}</span>`).join('');
+    } else {
+        skillsContainer.innerHTML = '<span class="skill-tag">Skill</span>';
+    }
+    
+    document.getElementById('cvCertifications').textContent = certifications;
+    document.getElementById('cvPortfolio').textContent = portfolio;
+    
+    document.querySelector('.preview-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ============================================
+// PDF DOWNLOAD
+// ============================================
+function downloadPDF() {
+    const element = document.getElementById('cvPreview');
+    const btn = document.querySelector('.btn-download');
+    const originalText = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + translations[currentLang].loadingPDF;
+    btn.disabled = true;
+    
+    const opt = {
+        margin: [0.5, 0.5, 0.5, 0.5],
+        filename: 'My_CV.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    
+    html2pdf().set(opt).from(element).save().then(function() {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    });
+}
+
+// ============================================
+// PRINT CV
+// ============================================
+function printCV() {
+    const previewContent = document.getElementById('cvPreview').innerHTML;
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <html><head><title>CV</title>
+        <style>
+            body { font-family: Arial, sans-serif; padding: 40px; }
+            .cv-preview { max-width: 800px; margin: 0 auto; }
+            .cv-header { text-align: center; border-bottom: 3px solid #667eea; padding-bottom: 20px; }
+            .cv-profile { display: flex; align-items: center; gap: 25px; }
+            .cv-photo { width: 100px; height: 100px; border-radius: 50%; overflow: hidden; }
+            .cv-photo img { width: 100%; height: 100%; object-fit: cover; }
+            .cv-section { margin: 20px 0; }
+            .cv-section h3 { color: #667eea; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; }
+            .skills-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+            .skill-tag { background: #f0f2f5; padding: 5px 15px; border-radius: 20px; }
+            @media print { body { padding: 20px; } }
+        </style>
+        </head><body>
+        <div class="cv-preview">${previewContent}</div>
+        <script>window.onload = function() { window.print(); }<\/script>
+        </body></html>
+    `);
+    printWindow.document.close();
+}
+
+// ============================================
+// SHARE CV
+// ============================================
+function shareCV() {
+    const url = window.location.href;
+    const text = translations[currentLang].shareText;
+    if (navigator.share) {
+        navigator.share({ title: 'My CV', text: text, url: url }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(text + '\n' + url).then(() => {
+            alert('✅ Link copied to clipboard!');
+        }).catch(() => {
+            prompt('Copy this link:', url);
+        });
+    }
+}
+
+// ============================================
+// LOCAL STORAGE
+// ============================================
+function saveToLocalStorage() {
+    const data = {
+        fullName: document.getElementById('fullName').value,
+        jobTitle: document.getElementById('jobTitle').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value,
+        education: document.getElementById('education').value,
+        experience: document.getElementById('experience').value,
+        skills: document.getElementById('skills').value,
+        certifications: document.getElementById('certifications').value,
+        portfolio: document.getElementById('portfolio').value,
+        photo: photoData,
+        template: currentTemplate
+    };
+    localStorage.setItem('cv_data', JSON.stringify(data));
+    alert('✅ Draft saved successfully!');
+}
+
+function loadFromLocalStorage() {
+    const saved = localStorage.getItem('cv_data');
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            document.getElementById('fullName').value = data.fullName || '';
+            document.getElementById('jobTitle').value = data.jobTitle || '';
+            document.getElementById('email').value = data.email || '';
+            document.getElementById('phone').value = data.phone || '';
+            document.getElementById('address').value = data.address || '';
+            document.getElementById('education').value = data.education || '';
+            document.getElementById('experience').value = data.experience || '';
+            document.getElementById('skills').value = data.skills || '';
+            document.getElementById('certifications').value = data.certifications || '';
+            document.getElementById('portfolio').value = data.portfolio || '';
+            if (data.photo) {
+                photoData = data.photo;
+                document.getElementById('photoPreview').innerHTML = `<img src="${photoData}" alt="Profile">`;
+                document.getElementById('cvPhoto').innerHTML = `<img src="${photoData}" alt="Profile">`;
+            }
+            if (data.template) changeTemplate(data.template);
+            generateCV();
+        } catch(e) { console.error('Load error:', e); }
+    }
+}
+
+// ============================================
+// CLEAR ALL
+// ============================================
+function clearAll() {
+    if (confirm(translations[currentLang].clearConfirm)) {
+        document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+        photoData = null;
+        document.getElementById('photoPreview').innerHTML = '';
+        document.getElementById('cvPhoto').innerHTML = '<i class="fas fa-user-circle"></i>';
+        document.getElementById('cvName').textContent = 'Your Name';
+        document.getElementById('cvJobTitle').textContent = 'Job Title';
+        document.getElementById('cvEmail').textContent = '📧 Email';
+        document.getElementById('cvPhone').textContent = '📞 Phone';
+        document.getElementById('cvAddress').textContent = '📍 Address';
+        document.getElementById('cvEducation').textContent = 'Education details appear here';
+        document.getElementById('cvExperience').textContent = 'Work experience appears here';
+        document.getElementById('cvSkills').innerHTML = '<span class="skill-tag">Skill</span>';
+        document.getElementById('cvCertifications').textContent = 'Certifications appear here';
+        document.getElementById('cvPortfolio').textContent = 'https://yourportfolio.com';
+        localStorage.removeItem('cv_data');
+    }
+}
+
+// ============================================
+// LOGIN SYSTEM - Send OTP
+// ============================================
+function sendOTP(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value;
+    const userName = document.getElementById('fullName').value || 'User';
+    
+    if (!email) { alert('Please enter your email address'); return; }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) { alert('Please enter a valid email address'); return; }
+    
+    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    const sendBtn = document.getElementById('sendOtpBtn');
+    const originalText = sendBtn.innerHTML;
+    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    sendBtn.disabled = true;
+    
+    const templateParams = {
+        to_email: email,
+        to_name: userName,
+        otp_code: generatedOTP,
+        subject: '🔐 Your CV Builder OTP Code'
+    };
+    
+    emailjs.send(
+        EMAILJS_CONFIG.serviceID,
+        EMAILJS_CONFIG.templateID,
+        templateParams
+    )
+    .then(function(response) {
+        console.log('✅ OTP Sent:', response);
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="success">✅ OTP sent successfully to your email!</div>';
+        document.getElementById('otpSection').style.display = 'block';
+        document.getElementById('loginEmail').disabled = true;
+        sendBtn.innerHTML = '<i class="fas fa-check"></i> Sent!';
+        sendBtn.style.background = '#28a745';
+        startOTPTimer();
+        document.getElementById('otpInput').focus();
+    })
+    .catch(function(error) {
+        console.error('❌ EmailJS Error:', error);
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="error">❌ Failed to send OTP. Please check your email and try again.</div>';
+        sendBtn.innerHTML = originalText;
+        sendBtn.disabled = false;
+    });
+}
+
+// ============================================
+// OTP TIMER
+// ============================================
+function startOTPTimer() {
+    if (otpTimer) clearInterval(otpTimer);
+    let timeLeft = 300;
+    const timerDisplay = document.getElementById('otpTimerDisplay');
+    timerDisplay.style.display = 'block';
+    otpTimer = setInterval(() => {
+        timeLeft--;
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerDisplay.textContent = `⏰ ${minutes}:${seconds.toString().padStart(2, '0')} remaining`;
+        if (timeLeft <= 0) {
+            clearInterval(otpTimer);
+            generatedOTP = null;
+            timerDisplay.textContent = '⏰ OTP expired. Please request a new one.';
+            timerDisplay.style.color = '#dc3545';
+        }
+    }, 1000);
+}
+
+// ============================================
+// VERIFY OTP
+// ============================================
+function verifyOTP() {
+    const enteredOTP = document.getElementById('otpInput').value;
+    const email = document.getElementById('loginEmail').value;
+    
+    if (!enteredOTP || enteredOTP.length !== 6) {
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="error">⚠️ Please enter a valid 6-digit OTP</div>';
+        return;
+    }
+    
+    if (enteredOTP === generatedOTP) {
+        loggedInUser = email;
+        localStorage.setItem('cv_user', email);
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="success">✅ ' + translations[currentLang].loginSuccess + '</div>';
+        document.getElementById('userStatus').textContent = '👤 ' + email;
+        document.getElementById('loginBtn').innerHTML = '<i class="fas fa-check-circle"></i>';
+        if (otpTimer) clearInterval(otpTimer);
+        setTimeout(() => {
+            closeLogin();
+            generateCV();
+            saveToLocalStorage();
+        }, 1500);
+    } else {
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="error">❌ ' + translations[currentLang].loginError + '</div>';
+        document.getElementById('otpInput').value = '';
+        document.getElementById('otpInput').focus();
+    }
+}
+
+// ============================================
+// RESEND OTP
+// ============================================
+function resendOTP() {
+    const email = document.getElementById('loginEmail').value;
+    const userName = document.getElementById('fullName').value || 'User';
+    if (!email) { alert('Please enter your email'); return; }
+    
+    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+    const resendBtn = document.getElementById('resendBtn');
+    resendBtn.disabled = true;
+    resendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    
+    emailjs.send(EMAILJS_CONFIG.serviceID, EMAILJS_CONFIG.templateID, {
+        to_email: email, to_name: userName, otp_code: generatedOTP,
+        subject: '🔐 New OTP Code for CV Builder'
+    })
+    .then(function() {
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="success">✅ New OTP sent successfully!</div>';
+        resendBtn.innerHTML = '<i class="fas fa-check"></i> Sent!';
+        startOTPTimer();
+        document.getElementById('otpInput').focus();
+        setTimeout(() => {
+            resendBtn.disabled = false;
+            resendBtn.innerHTML = '<i class="fas fa-redo"></i> Resend';
+        }, 3000);
+    })
+    .catch(function() {
+        document.getElementById('loginStatus').innerHTML = 
+            '<div class="error">❌ Failed to resend OTP</div>';
+        resendBtn.disabled = false;
+        resendBtn.innerHTML = '<i class="fas fa-redo"></i> Resend';
+    });
+}
+
+// ============================================
+// MODAL FUNCTIONS
+// ============================================
+function showLogin() {
+    document.getElementById('loginModal').style.display = 'block';
+    document.getElementById('loginStatus').innerHTML = '';
+    document.getElementById('otpSection').style.display = 'none';
+    document.getElementById('loginEmail').disabled = false;
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('otpInput').value = '';
+    const sendBtn = document.getElementById('sendOtpBtn');
+    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> ' + translations[currentLang].sendOtpText;
+    sendBtn.disabled = false;
+    sendBtn.style.background = '';
+    document.getElementById('otpTimerDisplay').style.display = 'none';
+}
+
+function closeLogin() {
+    document.getElementById('loginModal').style.display = 'none';
+    if (otpTimer) clearInterval(otpTimer);
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('loginModal');
+    if (event.target === modal) closeLogin();
+};
+
+// ============================================
+// KEYBOARD SHORTCUTS
+// ============================================
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 'g') { e.preventDefault(); generateCV(); }
+    if (e.ctrlKey && e.key === 's') { e.preventDefault(); saveToLocalStorage(); }
+    if (e.key === 'Escape') closeLogin();
+});
+
+// ============================================
+// INITIALIZATION
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+    // Load language
+    const savedLang = localStorage.getItem('cv_language');
+    if (savedLang) changeLanguage(savedLang);
+    else changeLanguage('en');
+    
+    // Load dark mode
+    if (localStorage.getItem('cv_darkmode') === 'true') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('darkModeBtn').innerHTML = '<i class="fas fa-sun"></i>';
+    }
+    
+    // Load user
+    const savedUser = localStorage.getItem('cv_user');
+    if (savedUser) {
+        loggedInUser = savedUser;
+        document.getElementById('userStatus').textContent = '👤 ' + savedUser;
+        document.getElementById('loginBtn').innerHTML = '<i class="fas fa-check-circle"></i>';
+    }
+    
+    // Load CV data
+    loadFromLocalStorage();
+    
+    console.log('🚀 CV Builder 100% Working!');
+    console.log('💡 Shortcuts: Ctrl+G=Generate, Ctrl+S=Save');
+});
+</script>
+
 </body>
 </html>
