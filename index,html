@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional CV Builder</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLogin()">&times;</span>
+            <h2 id="loginTitle"><i class="fas fa-sign-in-alt"></i> Login</h2>
+            <p id="loginSubtitle">Login to save your CV</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label id="emailLabel">Email</label>
+                    <input type="email" id="loginEmail" placeholder="your@email.com" required>
+                </div>
+                <button type="submit" class="btn-primary" id="sendOtpBtn">
+                    <i class="fas fa-paper-plane"></i> <span id="sendOtpText">Send OTP</span>
+                </button>
+            </form>
+            <div id="otpSection" style="display:none;">
+                <div class="form-group">
+                    <label id="otpLabel">Enter OTP Code</label>
+                    <input type="text" id="otpInput" placeholder="6-digit OTP" maxlength="6">
+                </div>
+                <button onclick="verifyOTP()" class="btn-primary" id="verifyBtn">
+                    <i class="fas fa-check"></i> <span id="verifyText">Verify</span>
+                </button>
+            </div>
+            <div id="loginStatus"></div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container" id="mainContainer">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-file-alt"></i> <span id="appTitle">Professional CV Builder</span></h1>
+            <div class="header-actions">
+                <!-- Language Selector -->
+                <div class="language-selector">
+                    <button onclick="changeLanguage('en')" class="lang-btn active" data-lang="en">
+                        <img src="https://flagcdn.com/24x18/gb.png" alt="English"> EN
+                    </button>
+                    <button onclick="changeLanguage('si')" class="lang-btn" data-lang="si">
+                        <img src="https://flagcdn.com/24x18/lk.png" alt="Sinhala"> SI
+                    </button>
+                    <button onclick="changeLanguage('tm')" class="lang-btn" data-lang="tm">
+                        <img src="https://flagcdn.com/24x18/lk.png" alt="Tamil"> TM
+                    </button>
+                </div>
+                <button onclick="toggleDarkMode()" class="icon-btn" id="darkModeBtn">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button onclick="showLogin()" class="icon-btn" id="loginBtn">
+                    <i class="fas fa-user"></i>
+                </button>
+                <span id="userStatus"></span>
+            </div>
+        </div>
+
+        <!-- Professional Tips -->
+        <div class="tips-section">
+            <h3><i class="fas fa-lightbulb"></i> <span id="tipsTitle">Professional Tips</span></h3>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <i class="fas fa-font"></i>
+                    <p id="tip1">Font sizes: 11-12pt body, 14-16pt headings</p>
+                </div>
+                <div class="tip-card">
+                    <i class="fas fa-arrows-alt"></i>
+                    <p id="tip2">Keep white space - don't overcrowd</p>
+                </div>
+                <div class="tip-card">
+                    <i class="fas fa-bolt"></i>
+                    <p id="tip3">Use action verbs: Developed, Managed, Created</p>
+                </div>
+                <div class="tip-card">
+                    <i class="fas fa-chart-line"></i>
+                    <p id="tip4">Quantify achievements: "Increased sales by 20%"</p>
+                </div>
+                <div class="tip-card">
+                    <i class="fas fa-check-circle"></i>
+                    <p id="tip5">Fit perfectly on A4 size</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template Selector -->
+        <div class="template-selector">
+            <h3><i class="fas fa-palette"></i> <span id="templateTitle">Choose Template</span></h3>
+            <div class="template-buttons">
+                <button onclick="changeTemplate('modern')" class="template-btn active" data-template="modern">
+                    <i class="fas fa-layer-group"></i> <span id="templateModern">Modern</span>
+                </button>
+                <button onclick="changeTemplate('classic')" class="template-btn" data-template="classic">
+                    <i class="fas fa-book"></i> <span id="templateClassic">Classic</span>
+                </button>
+                <button onclick="changeTemplate('creative')" class="template-btn" data-template="creative">
+                    <i class="fas fa-paint-brush"></i> <span id="templateCreative">Creative</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Form Section -->
+            <div class="form-section">
+                <h2><i class="fas fa-edit"></i> <span id="formTitle">Enter Your Details</span></h2>
+                
+                <!-- Profile Photo Upload -->
+                <div class="form-group">
+                    <label><i class="fas fa-camera"></i> <span id="photoLabel">Profile Photo</span></label>
+                    <div class="photo-upload">
+                        <input type="file" id="photoUpload" accept="image/*" onchange="uploadPhoto(event)">
+                        <label for="photoUpload" class="photo-label">
+                            <i class="fas fa-plus-circle"></i> <span id="uploadPhotoText">Upload Photo</span>
+                        </label>
+                        <div id="photoPreview"></div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> <span id="fullNameLabel">Full Name</span></label>
+                        <input type="text" id="fullName" placeholder="Kamal Perera">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-briefcase"></i> <span id="jobTitleLabel">Job Title</span></label>
+                        <input type="text" id="jobTitle" placeholder="Software Engineer">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> <span id="emailLabelForm">Email</span></label>
+                        <input type="email" id="email" placeholder="kamal@gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> <span id="phoneLabel">Phone</span></label>
+                        <input type="text" id="phone" placeholder="071-2345678">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> <span id="addressLabel">Address</span></label>
+                    <input type="text" id="address" placeholder="Colombo, Sri Lanka">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-graduation-cap"></i> <span id="educationLabel">Education</span></label>
+                    <textarea id="education" rows="3" placeholder="University of Colombo - BSc (Hons) Computer Science"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-briefcase"></i> <span id="experienceLabel">Work Experience</span></label>
+                    <textarea id="experience" rows="4" placeholder="ABC Company - Software Engineer (2020-Present)&#10;• Developed web applications using React&#10;• Increased performance by 30%"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-code"></i> <span id="skillsLabel">Skills</span></label>
+                    <textarea id="skills" rows="3" placeholder="JavaScript, Python, React, PHP, Node.js"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-certificate"></i> <span id="certificationsLabel">Certifications</span></label>
+                    <textarea id="certifications" rows="2" placeholder="AWS Certified Developer, IELTS 7.5"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-link"></i> <span id="portfolioLabel">Portfolio/Website</span></label>
+                    <input type="text" id="portfolio" placeholder="https://yourportfolio.com">
+                </div>
+
+                <div class="form-actions">
+                    <button onclick="generateCV()" class="btn-primary">
+                        <i class="fas fa-magic"></i> <span id="generateBtn">Generate CV</span>
+                    </button>
+                    <button onclick="saveToLocalStorage()" class="btn-secondary">
+                        <i class="fas fa-save"></i> <span id="saveDraftBtn">Save Draft</span>
+                    </button>
+                    <button onclick="loadFromLocalStorage()" class="btn-secondary">
+                        <i class="fas fa-upload"></i> <span id="loadDraftBtn">Load Draft</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-section">
+                <h2><i class="fas fa-eye"></i> <span id="previewTitle">CV Preview</span></h2>
+                
+                <div class="cv-actions">
+                    <button onclick="downloadPDF()" class="btn-download">
+                        <i class="fas fa-file-pdf"></i> <span id="pdfBtn">PDF Download</span>
+                    </button>
+                    <button onclick="printCV()" class="btn-print">
+                        <i class="fas fa-print"></i> <span id="printBtn">Print</span>
+                    </button>
+                    <button onclick="shareCV()" class="btn-share">
+                        <i class="fas fa-share-alt"></i> <span id="shareBtn">Share</span>
+                    </button>
+                    <button onclick="clearAll()" class="btn-clear">
+                        <i class="fas fa-trash"></i> <span id="clearBtn">Clear</span>
+                    </button>
+                </div>
+
+                <div id="cvPreview" class="cv-preview modern-template">
+                    <div class="cv-header">
+                        <div class="cv-profile">
+                            <div id="cvPhoto" class="cv-photo">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="cv-header-text">
+                                <h2 id="cvName">Your Name</h2>
+                                <p class="cv-job-title" id="cvJobTitle">Job Title</p>
+                                <p class="cv-contact" id="cvEmail">📧 Email</p>
+                                <p class="cv-contact" id="cvPhone">📞 Phone</p>
+                                <p class="cv-contact" id="cvAddress">📍 Address</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cv-body">
+                        <div class="cv-section">
+                            <h3><i class="fas fa-graduation-cap"></i> <span id="cvEducationTitle">Education</span></h3>
+                            <p id="cvEducation">Education details appear here</p>
+                        </div>
+                        
+                        <div class="cv-section">
+                            <h3><i class="fas fa-briefcase"></i> <span id="cvExperienceTitle">Work Experience</span></h3>
+                            <p id="cvExperience">Work experience appears here</p>
+                        </div>
+                        
+                        <div class="cv-section">
+                            <h3><i class="fas fa-code"></i> <span id="cvSkillsTitle">Skills</span></h3>
+                            <div id="cvSkills" class="skills-tags">
+                                <span class="skill-tag">Skill</span>
+                            </div>
+                        </div>
+                        
+                        <div class="cv-section">
+                            <h3><i class="fas fa-certificate"></i> <span id="cvCertificationsTitle">Certifications</span></h3>
+                            <p id="cvCertifications">Certifications appear here</p>
+                        </div>
+
+                        <div class="cv-section">
+                            <h3><i class="fas fa-link"></i> <span id="cvPortfolioTitle">Portfolio</span></h3>
+                            <p id="cvPortfolio">https://yourportfolio.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
